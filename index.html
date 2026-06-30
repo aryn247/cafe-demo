@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-B-QJiUrJ.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CrPatxcU.css">
+    <script type="module" crossorigin src="./assets/index-CJjBK6LC.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BSzbaA0n.css">
   </head>
   <body>
     <!-- Welcome Overlay Screen -->
@@ -359,7 +359,114 @@
       
       <div class="cart-backdrop" id="cart-backdrop"></div>
 
-      <!-- Celebration/Checkout Modal -->
+      <!-- Cross-Sell Modal ("Anything Else?") -->
+      <div class="modal-overlay" id="cross-sell-modal">
+        <div class="modal-card cross-sell-card">
+          <div class="modal-success-icon cross-sell-icon" style="border-color: hsl(var(--color-primary)); color: hsl(var(--color-primary)); background: rgba(217, 125, 56, 0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          </div>
+          <h2>Pair it with a Bite?</h2>
+          <p>Your item is prepared! Would you like to add a fresh butter croissant or treat from our Bakehouse before checkout?</p>
+          <div class="cross-sell-buttons" style="display: flex; flex-direction: column; gap: 0.6rem; width: 100%; margin-top: 1.5rem;">
+            <button id="cross-sell-yes-btn" class="checkout-btn">Yes, show pastries</button>
+            <button id="cross-sell-no-btn" class="close-modal-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: hsl(var(--color-text-main)); width: 100%; margin-top: 0;">No, proceed to checkout</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authentication Wall Modal -->
+      <div class="modal-overlay" id="auth-modal">
+        <div class="modal-card auth-card">
+          <div class="modal-success-icon auth-icon" style="border-color: hsl(var(--color-primary)); color: hsl(var(--color-primary)); background: rgba(217, 125, 56, 0.1);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shield-lock-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="9" y="11" width="6" height="4" rx="1"/><path d="M12 11V9a2 2 0 1 0-4 0"/></svg>
+          </div>
+          <h2 id="auth-title">Verify Phone Number</h2>
+          <p id="auth-desc" style="font-size: 0.95rem; margin-bottom: 1.5rem;">To protect the kitchen against automated spam, please verify your mobile number.</p>
+          
+          <!-- State 1: Enter Phone Number -->
+          <div id="auth-phone-step" style="width: 100%;">
+            <div class="phone-input-group" style="display: flex; gap: 0.6rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 50px; padding: 0.2rem 1rem; align-items: center; width: 100%;">
+              <span class="phone-prefix" style="font-weight: 600; color: hsl(var(--color-primary-light)); border-right: 1px solid rgba(255,255,255,0.1); padding-right: 0.6rem;">+91</span>
+              <input type="tel" id="auth-phone" placeholder="Enter 10-digit mobile" maxlength="10" style="background: transparent; border: none; color: white; flex-grow: 1; outline: none; font-family: 'Outfit', sans-serif; font-size: 1.05rem;" required />
+            </div>
+            <button id="auth-send-otp-btn" class="checkout-btn" style="margin-top: 1.5rem;">Send OTP</button>
+          </div>
+
+          <!-- State 2: Enter OTP -->
+          <div id="auth-otp-step" class="hidden-step" style="display: none; width: 100%;">
+            <p class="otp-sent-txt" style="font-size: 0.88rem; color: hsl(var(--color-text-muted)); margin-bottom: 1.2rem;">Enter the 4-digit code sent to your phone (Demo Code: <strong style="color: hsl(var(--color-primary-light));">1234</strong>)</p>
+            <div class="otp-inputs" style="display: flex; justify-content: center; gap: 0.8rem; margin: 1rem 0;">
+              <input type="text" class="otp-digit" data-idx="0" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
+              <input type="text" class="otp-digit" data-idx="1" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
+              <input type="text" class="otp-digit" data-idx="2" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
+              <input type="text" class="otp-digit" data-idx="3" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
+            </div>
+            <button id="auth-verify-otp-btn" class="checkout-btn" style="margin-top: 1.5rem;">Verify &amp; Continue</button>
+            <button id="auth-back-btn" class="close-modal-btn" style="margin-top: 0.8rem; background: transparent; border: none; color: hsl(var(--color-primary-light)); width: 100%;">Back</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Checkout Modal (Dining & Geolocation Checks) -->
+      <div class="modal-overlay" id="checkout-details-modal">
+        <div class="modal-card checkout-details-card" style="max-width: 480px;">
+          <h2>Checkout Verification</h2>
+          <p style="font-size: 0.9rem; color: hsl(var(--color-text-muted)); margin-bottom: 1.8rem;">Confirm location and table details to secure order placement</p>
+          
+          <form id="checkout-details-form" style="width: 100%; text-align: left; display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Dining Option -->
+            <div class="form-section">
+              <label style="display: block; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; color: hsl(var(--color-primary-light)); letter-spacing: 0.05em; margin-bottom: 0.6rem;">Dining Mode</label>
+              <div class="dining-selector" style="display: flex; gap: 0.6rem; margin-bottom: 1rem;">
+                <button type="button" class="dining-btn active" id="dining-dinein" style="flex: 1; padding: 0.7rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: hsl(var(--color-text-muted)); font-weight: 600; font-family: 'Outfit'; cursor: pointer; transition: var(--transition-smooth);" data-option="dinein">Dine-In</button>
+                <button type="button" class="dining-btn" id="dining-takeaway" style="flex: 1; padding: 0.7rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: hsl(var(--color-text-muted)); font-weight: 600; font-family: 'Outfit'; cursor: pointer; transition: var(--transition-smooth);" data-option="takeaway">Takeaway</button>
+              </div>
+              
+              <div id="table-number-group" class="input-details-group" style="display: flex; flex-direction: column; gap: 0.4rem;">
+                <label for="table-number" style="font-size: 0.85rem; color: hsl(var(--color-text-muted));">Table Number</label>
+                <input type="number" id="table-number" placeholder="Enter table number (e.g. 5)" min="1" max="50" style="width: 100%; padding: 0.8rem 1.2rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: white; outline: none; font-family: 'Outfit'; font-size: 0.95rem;" required />
+              </div>
+            </div>
+            
+            <!-- Geolocation Geofencing -->
+            <div class="form-section" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.2rem;">
+              <label style="display: block; font-weight: 600; font-size: 0.9rem; text-transform: uppercase; color: hsl(var(--color-primary-light)); letter-spacing: 0.05em; margin-bottom: 0.4rem;">Location Verification</label>
+              <p style="font-size: 0.85rem; color: hsl(var(--color-text-muted)); line-height: 1.4; margin-bottom: 1rem;">To prevent spam orders from outside, we verify your live GPS coordinates before starting preparation.</p>
+              
+              <div style="display: flex; flex-direction: column; gap: 0.8rem; align-items: flex-start;">
+                <button type="button" id="verify-location-btn" style="display: flex; align-items: center; gap: 0.6rem; background: rgba(217,125,56,0.15); border: 1px solid rgba(217,125,56,0.3); color: hsl(var(--color-primary-light)); padding: 0.7rem 1.4rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-family: 'Outfit'; transition: var(--transition-smooth);">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="loc-pin-icon"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span>Verify My Location</span>
+                </button>
+                <div id="location-status" class="loc-badge status-pending" style="font-size: 0.85rem; font-weight: 500; padding: 0.4rem 1rem; border-radius: 50px; background: rgba(255,255,255,0.05); color: hsl(var(--color-text-muted)); border: 1px solid rgba(255,255,255,0.08); transition: var(--transition-smooth);">
+                  Location not verified
+                </div>
+              </div>
+            </div>
+
+            <!-- Turnstile Captcha Mock -->
+            <div class="form-section" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.2rem; margin-bottom: 0.5rem;">
+              <div class="turnstile-box" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 0.8rem 1.2rem; width: 100%;">
+                <div class="turnstile-check" style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer;">
+                  <input type="checkbox" id="turnstile-checkbox" style="width: 20px; height: 20px; border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.25); background: transparent; cursor: pointer; accent-color: hsl(var(--color-primary));" required />
+                  <label for="turnstile-checkbox" style="font-size: 0.9rem; font-weight: 500; color: hsl(var(--color-text-main)); cursor: pointer;">I am not a robot</label>
+                </div>
+                <div class="turnstile-logo" style="display: flex; flex-direction: column; align-items: flex-end; color: hsl(var(--color-text-muted));">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shield-spin" style="color: hsl(var(--color-primary));"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.1rem;">Turnstile Secure</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="checkout-actions" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; width: 100%;">
+              <button type="submit" id="confirm-order-btn" class="checkout-btn" style="width: 100%;" disabled>Confirm &amp; Pay</button>
+              <button type="button" id="cancel-checkout-btn" class="close-modal-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: hsl(var(--color-text-main)); width: 100%; margin-top: 0;">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Celebration/Checkout Success Modal -->
       <div class="modal-overlay" id="checkout-modal">
         <div class="modal-card">
           <div class="modal-success-icon">
