@@ -2025,3 +2025,80 @@ h1, h2, h3 {
     gap: 1.2rem;
   }
 }
+
+/* Security Verification & OTP Animations */
+.shield-spin {
+  animation: turnstile-pulse 2s linear infinite alternate;
+}
+@keyframes turnstile-pulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(217, 125, 56, 0.4)); }
+  100% { transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(217, 125, 56, 0.7)); }
+}
+
+.shield-lock-icon {
+  animation: shield-wobble 4s ease-in-out infinite;
+}
+@keyframes shield-wobble {
+  0%, 100% { transform: rotate(0deg); }
+  5%, 15%, 25%, 35% { transform: rotate(-6deg); }
+  10%, 20%, 30%, 40% { transform: rotate(6deg); }
+  45%, 95% { transform: scale(1.03); }
+}
+
+.dining-btn {
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  background: rgba(255,255,255,0.03) !important;
+  color: hsl(var(--color-text-muted)) !important;
+}
+
+.dining-btn:hover {
+  background: rgba(255,255,255,0.06) !important;
+  color: hsl(var(--color-text-main)) !important;
+}
+
+.dining-btn.active {
+  background: hsl(var(--color-primary)) !important;
+  color: white !important;
+  border-color: hsl(var(--color-primary)) !important;
+  box-shadow: 0 4px 12px rgba(217, 125, 56, 0.25);
+}
+
+.otp-digit:focus {
+  border-color: hsl(var(--color-primary-light)) !important;
+  box-shadow: 0 0 10px rgba(217, 125, 56, 0.25);
+  background: rgba(255,255,255,0.08) !important;
+}
+
+.loc-badge {
+  border: 1px solid transparent;
+}
+.loc-badge.status-pending {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: hsl(var(--color-text-muted)) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+.loc-badge.status-verifying {
+  background: rgba(217, 125, 56, 0.1) !important;
+  color: hsl(var(--color-primary-light)) !important;
+  border-color: rgba(217, 125, 56, 0.3) !important;
+  animation: blink-badge 1s ease-in-out infinite alternate;
+}
+.loc-badge.status-success {
+  background: rgba(82, 183, 136, 0.1) !important;
+  color: #52b788 !important;
+  border-color: rgba(82, 183, 136, 0.4) !important;
+}
+.loc-badge.status-error {
+  background: rgba(239, 71, 111, 0.1) !important;
+  color: #ef476f !important;
+  border-color: rgba(239, 71, 111, 0.4) !important;
+}
+@keyframes blink-badge {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.input-details-group input:focus {
+  border-color: rgba(217, 125, 56, 0.4) !important;
+  background: rgba(255,255,255,0.06) !important;
+}

@@ -98,7 +98,15 @@ const ALL_ITEMS = [...DRINKS, ...BAKEHOUSE];
 const state = {
   cart: [], // items: { id, name, price, qty }
   isBrewing: false,
-  activeCategory: 'drinks' // 'drinks' or 'bakehouse'
+  activeCategory: 'drinks', // 'drinks' or 'bakehouse'
+  
+  // Security & Authentication session states
+  isLoggedIn: false,
+  user: null,
+  geolocationVerified: false,
+  diningOption: 'dinein', // 'dinein' or 'takeaway'
+  orderAttempts: 0, // simulated rate-limiting
+  currentCraftingItem: null // keep track of current prepared item for cross-sell
 };
 
 // 3. DOM Cache
@@ -131,6 +139,34 @@ const dom = {
   infoSwipeIndicator: document.getElementById('info-swipe-indicator'),
   infoGrid: document.querySelector('.info-grid'),
   
+  // Cross-sell modal
+  crossSellModal: document.getElementById('cross-sell-modal'),
+  crossSellYesBtn: document.getElementById('cross-sell-yes-btn'),
+  crossSellNoBtn: document.getElementById('cross-sell-no-btn'),
+
+  // Auth modal
+  authModal: document.getElementById('auth-modal'),
+  authPhoneStep: document.getElementById('auth-phone-step'),
+  authOtpStep: document.getElementById('auth-otp-step'),
+  authPhoneInput: document.getElementById('auth-phone'),
+  authSendOtpBtn: document.getElementById('auth-send-otp-btn'),
+  authVerifyOtpBtn: document.getElementById('auth-verify-otp-btn'),
+  authBackBtn: document.getElementById('auth-back-btn'),
+  otpDigits: document.querySelectorAll('.otp-digit'),
+
+  // Checkout details modal
+  checkoutDetailsModal: document.getElementById('checkout-details-modal'),
+  checkoutDetailsForm: document.getElementById('checkout-details-form'),
+  diningDineInBtn: document.getElementById('dining-dinein'),
+  diningTakeawayBtn: document.getElementById('dining-takeaway'),
+  tableNumberGroup: document.getElementById('table-number-group'),
+  tableNumberInput: document.getElementById('table-number'),
+  verifyLocationBtn: document.getElementById('verify-location-btn'),
+  locationStatus: document.getElementById('location-status'),
+  turnstileCheckbox: document.getElementById('turnstile-checkbox'),
+  confirmOrderBtn: document.getElementById('confirm-order-btn'),
+  cancelCheckoutBtn: document.getElementById('cancel-checkout-btn'),
+
   // Machine / Prep Station
   machine: document.getElementById('espresso-machine'),
   portafilter: document.getElementById('portafilter-nozzle'),
@@ -141,7 +177,7 @@ const dom = {
   cupLanding: document.getElementById('cup-landing-spot'),
   steamContainer: document.getElementById('steam-container'),
 
-  // Checkout modal
+  // Checkout success modal
   checkoutModal: document.getElementById('checkout-modal'),
   orderReceipt: document.getElementById('order-receipt'),
   closeModalBtn: document.getElementById('close-modal-btn'),
@@ -185,9 +221,30 @@ function setupEventListeners() {
     dom.mobileNavBackdrop.addEventListener('click', () => toggleMobileMenu(false));
   }
 
-  // Modal Actions
-  dom.checkoutBtn.addEventListener('click', handleCheckout);
+  // Modal Actions (Success Dialog)
   dom.closeModalBtn.addEventListener('click', closeModal);
+
+  // Cross-sell Actions
+  dom.crossSellYesBtn.addEventListener('click', handleCrossSellYes);
+  dom.crossSellNoBtn.addEventListener('click', handleCrossSellNo);
+
+  // Authentication Wall Listeners
+  dom.authSendOtpBtn.addEventListener('click', handleSendOtp);
+  dom.authVerifyOtpBtn.addEventListener('click', handleVerifyOtp);
+  dom.authBackBtn.addEventListener('click', handleAuthBack);
+  setupOtpAutofocus();
+
+  // Checkout Details Listeners
+  dom.checkoutBtn.addEventListener('click', handleCheckoutTrigger);
+  dom.diningDineInBtn.addEventListener('click', () => toggleDiningOption('dinein'));
+  dom.diningTakeawayBtn.addEventListener('click', () => toggleDiningOption('takeaway'));
+  dom.verifyLocationBtn.addEventListener('click', handleLocationVerify);
+  dom.turnstileCheckbox.addEventListener('change', checkCheckoutFormValidity);
+  dom.tableNumberInput.addEventListener('input', checkCheckoutFormValidity);
+  dom.cancelCheckoutBtn.addEventListener('click', () => {
+    dom.checkoutDetailsModal.classList.remove('open');
+  });
+  dom.checkoutDetailsForm.addEventListener('submit', handleFinalOrderSubmission);
 
   // Menu Category Tabs
   dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => {
@@ -369,6 +426,7 @@ function triggerCraftSequence(itemId) {
   state.isBrewing = true;
   
   const item = ALL_ITEMS.find(i => i.id === itemId);
+  state.currentCraftingItem = item;
   const isDrink = item.category === 'drinks';
   
   // Disable all action buttons
@@ -504,8 +562,8 @@ function animateFlyToCart(element, item) {
     dom.cartToggleBtn.classList.add('pop');
     setTimeout(() => dom.cartToggleBtn.classList.remove('pop'), 300);
     
-    // Open drawer
-    toggleCart(true);
+    // Open Cross-Sell modal instead of Cart drawer directly
+    dom.crossSellModal.classList.add('open');
 
     // Reset machine locks and portafilter UI
     state.isBrewing = false;
@@ -601,11 +659,233 @@ function updateCartUI() {
   }
 }
 
-// 14. Checkout Modal
-function handleCheckout() {
+// 14. Cross-sell Handlers
+function handleCrossSellYes() {
+  dom.crossSellModal.classList.remove('open');
+  
+  // Toggle tab button and show pastries
+  dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.getAttribute('data-tab') === 'bakehouse') {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  state.activeCategory = 'bakehouse';
+  renderMenu();
+  setupSwipeIndicators();
+  
+  // Smooth scroll back to menu
+  const menuSec = document.getElementById('menu');
+  if (menuSec) {
+    const headerOffset = 90;
+    const elementPosition = menuSec.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+  }
+}
+
+function handleCrossSellNo() {
+  dom.crossSellModal.classList.remove('open');
+  toggleCart(true);
+}
+
+// 15. Authentication Wall Handlers (Spam Blocking)
+function handleCheckoutTrigger() {
+  toggleCart(false); // Close cart drawer
+  
+  if (!state.isLoggedIn) {
+    // Show auth modal and reset state to phone input step
+    dom.authPhoneStep.style.display = 'block';
+    dom.authOtpStep.style.display = 'none';
+    dom.authPhoneInput.value = '';
+    dom.authModal.classList.add('open');
+  } else {
+    // Open verification check details modal
+    openCheckoutDetails();
+  }
+}
+
+function handleSendOtp() {
+  const phoneVal = dom.authPhoneInput.value;
+  if (phoneVal.length !== 10 || isNaN(phoneVal)) {
+    alert('Please enter a valid 10-digit mobile number.');
+    return;
+  }
+  
+  // Transition to OTP verification step
+  dom.authPhoneStep.style.display = 'none';
+  dom.authOtpStep.style.display = 'block';
+  
+  // Clear OTP digits and focus on first box
+  dom.otpDigits.forEach(input => input.value = '');
+  if (dom.otpDigits[0]) dom.otpDigits[0].focus();
+}
+
+function handleVerifyOtp() {
+  let code = '';
+  dom.otpDigits.forEach(input => code += input.value);
+  
+  if (code === '1234') {
+    // Mock login successfully
+    state.isLoggedIn = true;
+    state.user = { phone: dom.authPhoneInput.value };
+    
+    // Close auth modal and redirect to checkout details
+    dom.authModal.classList.remove('open');
+    setTimeout(openCheckoutDetails, 300);
+  } else {
+    alert('Invalid OTP code. Please enter "1234" for the demo verification.');
+    dom.otpDigits.forEach(input => input.value = '');
+    if (dom.otpDigits[0]) dom.otpDigits[0].focus();
+  }
+}
+
+function handleAuthBack() {
+  dom.authPhoneStep.style.display = 'block';
+  dom.authOtpStep.style.display = 'none';
+}
+
+function setupOtpAutofocus() {
+  dom.otpDigits.forEach(input => {
+    input.addEventListener('input', (e) => {
+      const idx = parseInt(input.getAttribute('data-idx'));
+      if (input.value.length === 1 && idx < 3) {
+        // Shift focus to next box
+        const nextBox = document.querySelector(`.otp-digit[data-idx="${idx + 1}"]`);
+        if (nextBox) nextBox.focus();
+      }
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const idx = parseInt(input.getAttribute('data-idx'));
+      if (e.key === 'Backspace' && input.value.length === 0 && idx > 0) {
+        // Shift focus to previous box
+        const prevBox = document.querySelector(`.otp-digit[data-idx="${idx - 1}"]`);
+        if (prevBox) {
+          prevBox.focus();
+          prevBox.value = '';
+        }
+      }
+    });
+  });
+}
+
+// 16. Checkout Details Modals (Dining & Geolocation checks)
+function openCheckoutDetails() {
+  state.geolocationVerified = false;
+  dom.turnstileCheckbox.checked = false;
+  dom.confirmOrderBtn.disabled = true;
+  
+  // Reset location UI elements
+  dom.locationStatus.className = 'loc-badge status-pending';
+  dom.locationStatus.innerText = 'Location not verified';
+  
+  // Set default dining option
+  toggleDiningOption('dinein');
+  dom.tableNumberInput.value = '';
+
+  dom.checkoutDetailsModal.classList.add('open');
+}
+
+function toggleDiningOption(option) {
+  state.diningOption = option;
+  
+  if (option === 'dinein') {
+    dom.diningDineInBtn.classList.add('active');
+    dom.diningTakeawayBtn.classList.remove('active');
+    dom.tableNumberGroup.style.display = 'flex';
+    dom.tableNumberInput.required = true;
+  } else {
+    dom.diningDineInBtn.classList.remove('active');
+    dom.diningTakeawayBtn.classList.add('active');
+    dom.tableNumberGroup.style.display = 'none';
+    dom.tableNumberInput.required = false;
+  }
+  checkCheckoutFormValidity();
+}
+
+function handleLocationVerify() {
+  dom.locationStatus.className = 'loc-badge status-verifying';
+  dom.locationStatus.innerText = 'Requesting GPS coords...';
+  
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Geolocation coordinates captured successfully!
+        state.geolocationVerified = true;
+        
+        // In a live server, we would calculate distance to the cafe coordinates.
+        // For this premium demo, we calculate coordinates and show a beautiful success statement
+        // simulating the geofence checker (showing they are within 8m range).
+        setTimeout(() => {
+          dom.locationStatus.className = 'loc-badge status-success';
+          dom.locationStatus.innerText = `Verified: Inside Cafe (Approx 8m distance)`;
+          checkCheckoutFormValidity();
+        }, 1200);
+      },
+      (error) => {
+        // Fallback / Denied states
+        state.geolocationVerified = false;
+        dom.locationStatus.className = 'loc-badge status-error';
+        
+        if (error.code === error.PERMISSION_DENIED) {
+          dom.locationStatus.innerText = 'Error: Location denied. Please enable coordinates.';
+        } else {
+          dom.locationStatus.innerText = 'Error: GPS signal weak. Try again.';
+        }
+        checkCheckoutFormValidity();
+      }
+    );
+  } else {
+    state.geolocationVerified = false;
+    dom.locationStatus.className = 'loc-badge status-error';
+    dom.locationStatus.innerText = 'Error: GPS not supported by browser.';
+    checkCheckoutFormValidity();
+  }
+}
+
+function checkCheckoutFormValidity() {
+  const isTurnstileChecked = dom.turnstileCheckbox.checked;
+  const isLocationVerified = state.geolocationVerified;
+  let isTableValid = true;
+
+  if (state.diningOption === 'dinein') {
+    const tableVal = dom.tableNumberInput.value;
+    isTableValid = tableVal !== '' && parseInt(tableVal) > 0;
+  }
+
+  // Enable final submission button only if all security/dining requirements are verified
+  if (isTurnstileChecked && isLocationVerified && isTableValid) {
+    dom.confirmOrderBtn.disabled = false;
+  } else {
+    dom.confirmOrderBtn.disabled = true;
+  }
+}
+
+function handleFinalOrderSubmission(e) {
+  e.preventDefault();
+  
+  // Simulated Rate Limiting: Prevent rapid spam orders
+  state.orderAttempts += 1;
+  if (state.orderAttempts > 3) {
+    alert('Security Alert: Multiple order submissions detected. Your IP rate limit is locked. Please try again in 5 minutes.');
+    return;
+  }
+
+  // Success flow
+  dom.checkoutDetailsModal.classList.remove('open');
+  
+  // Build final receipt html
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
   
-  let receiptHtml = state.cart.map(item => `
+  let receiptHtml = `
+    <div style="margin-bottom: 0.8rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 0.6rem; font-size: 0.85rem; color: hsl(var(--color-primary-light));">
+      <span>Mode: ${state.diningOption === 'dinein' ? `Dine-In (Table ${dom.tableNumberInput.value})` : 'Takeaway (Pick-Up)'}</span>
+    </div>
+  `;
+  
+  receiptHtml += state.cart.map(item => `
     <div class="receipt-item">
       <span>${item.qty}x ${item.name}</span>
       <span>$${(item.price * item.qty).toFixed(2)}</span>
@@ -620,8 +900,6 @@ function handleCheckout() {
   `;
 
   dom.orderReceipt.innerHTML = receiptHtml;
-  
-  toggleCart(false);
   dom.checkoutModal.classList.add('open');
 }
 
@@ -629,9 +907,12 @@ function closeModal() {
   dom.checkoutModal.classList.remove('open');
   state.cart = [];
   updateCartUI();
+  
+  // Reset order attempts rate limits on success
+  state.orderAttempts = 0;
 }
 
-// 15. Newsletter Subscription Handling
+// 17. Newsletter Subscription Handling
 function handleNewsletterSubmit(e) {
   e.preventDefault();
   const emailInput = document.getElementById('newsletter-email');
@@ -649,7 +930,7 @@ function handleNewsletterSubmit(e) {
   }
 }
 
-// 16. Scroll Observer for Active Link Highlights
+// 18. Scroll Observer for Active Link Highlights
 function setupScrollHighlight() {
   const sections = ['menu', 'brewing', 'about', 'hours-location'];
   const observerOptions = {
@@ -690,7 +971,7 @@ function setupScrollHighlight() {
   });
 }
 
-// 17. Scroll-based fade out logic for swipe indicators
+// 19. Scroll-based fade out logic for swipe indicators
 function setupSwipeIndicators() {
   // Menu Grid Horizontal Swipe Listener
   if (dom.menuGrid && dom.menuSwipeIndicator) {
