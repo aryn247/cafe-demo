@@ -141,6 +141,8 @@ const dom = {
   
   // Cross-sell modal
   crossSellModal: document.getElementById('cross-sell-modal'),
+  crossSellTitle: document.getElementById('cross-sell-title'),
+  crossSellDesc: document.getElementById('cross-sell-desc'),
   crossSellYesBtn: document.getElementById('cross-sell-yes-btn'),
   crossSellNoBtn: document.getElementById('cross-sell-no-btn'),
 
@@ -562,6 +564,17 @@ function animateFlyToCart(element, item) {
     dom.cartToggleBtn.classList.add('pop');
     setTimeout(() => dom.cartToggleBtn.classList.remove('pop'), 300);
     
+    // Set dynamic text on cross-sell modal depending on item category
+    if (item.category === 'drinks') {
+      dom.crossSellTitle.innerText = 'Pair it with a Bite?';
+      dom.crossSellDesc.innerText = 'Your drink is prepared! Would you like to order anything else?';
+      dom.crossSellYesBtn.innerText = 'Yes, show pastries';
+    } else {
+      dom.crossSellTitle.innerText = 'Pair it with a Brew?';
+      dom.crossSellDesc.innerText = 'Your pastry is plated! Would you like to order anything else?';
+      dom.crossSellYesBtn.innerText = 'Yes, show drinks';
+    }
+
     // Open Cross-Sell modal instead of Cart drawer directly
     dom.crossSellModal.classList.add('open');
 
@@ -663,15 +676,19 @@ function updateCartUI() {
 function handleCrossSellYes() {
   dom.crossSellModal.classList.remove('open');
   
-  // Toggle tab button and show pastries
+  // Toggle tab button and show correct category
+  const targetCategory = state.currentCraftingItem && state.currentCraftingItem.category === 'drinks'
+    ? 'bakehouse'
+    : 'drinks';
+
   dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => {
-    if (btn.getAttribute('data-tab') === 'bakehouse') {
+    if (btn.getAttribute('data-tab') === targetCategory) {
       btn.classList.add('active');
     } else {
       btn.classList.remove('active');
     }
   });
-  state.activeCategory = 'bakehouse';
+  state.activeCategory = targetCategory;
   renderMenu();
   setupSwipeIndicators();
   
