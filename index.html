@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AromaBlend - Premium Artisanal Cafe &amp; Brew House</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Welcome Overlay Screen -->
+    <div class="welcome-overlay" id="welcome-screen">
+      <div class="welcome-glass-card">
+        <div class="welcome-logo">
+          <span class="logo-accent">Aroma</span>&amp;Blend
+        </div>
+        <span class="welcome-subtitle">EST. 2026</span>
+        <h1 class="welcome-tagline">Crafting Coffee &amp; Culinary Art</h1>
+        <div class="welcome-divider"></div>
+        <p class="welcome-desc">Experience our digital brew house where artisanal recipes meet fluid, interactive animations.</p>
+        <button id="enter-cafe-btn" class="enter-btn">
+          <span>Enter Cafe</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="enter-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+      <div class="mobile-nav-header">
+        <div class="logo">
+          <span class="logo-accent">Aroma</span>&amp;Blend
+        </div>
+        <button id="mobile-menu-close" class="close-btn" aria-label="Close Mobile Menu">&times;</button>
+      </div>
+      <nav class="mobile-nav-links">
+        <a href="#menu" class="mobile-nav-link active">Menu</a>
+        <a href="#brewing" class="mobile-nav-link">Prep Lab</a>
+        <a href="#about" class="mobile-nav-link">Our Story</a>
+        <a href="#hours-location" class="mobile-nav-link">Hours &amp; Location</a>
+      </nav>
+    </div>
+    <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
+
+    <div id="app">
+      <!-- Top Navigation -->
+      <header class="app-header">
+        <!-- Hamburger Menu Button (Mobile Only) -->
+        <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Toggle Mobile Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+
+        <div class="logo">
+          <span class="logo-accent">Aroma</span>&amp;Blend
+        </div>
+        
+        <nav class="nav-links">
+          <a href="#menu" class="nav-link active">Menu</a>
+          <a href="#brewing" class="nav-link">Prep Lab</a>
+          <a href="#about" class="nav-link">Our Story</a>
+          <a href="#hours-location" class="nav-link">Hours &amp; Location</a>
+        </nav>
+        
+        <button id="cart-toggle-btn" class="cart-button" aria-label="Open Order Details">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-icon"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span>Cart</span>
+          <span id="cart-badge" class="cart-badge">0</span>
+        </button>
+      </header>
+
+      <!-- Main Layout -->
+      <main class="main-container">
+        <!-- Section 1: Prep / Brewing Lab (Showcase) -->
+        <section id="brewing" class="brewing-lab">
+          <div class="glass-card lab-header">
+            <h2>The Prep Lab</h2>
+            <p id="machine-status" class="status-text">Select an item from the menu to start crafting</p>
+          </div>
+
+          <div class="brew-workspace">
+            <!-- Espresso / Plating Prep Machine -->
+            <div class="espresso-machine" id="espresso-machine">
+              <!-- Top Header Glow -->
+              <div class="machine-top">
+                <div class="status-light" id="status-light"></div>
+                <div class="pressure-gauge">
+                  <div class="gauge-needle" id="gauge-needle"></div>
+                </div>
+              </div>
+              
+              <!-- Dispenser Section -->
+              <div class="machine-group">
+                <div class="portafilter" id="portafilter-nozzle"></div>
+                <div class="nozzle">
+                  <div class="stream-line" id="coffee-stream"></div>
+                </div>
+              </div>
+
+              <!-- Prep Platform & Tray -->
+              <div class="drip-tray">
+                <div class="cup-slot" id="cup-landing-spot">
+                  <!-- The cup or plate will drop here dynamically -->
+                </div>
+              </div>
+              
+              <!-- Steam Wand -->
+              <div class="steam-wand">
+                <div class="steam-output" id="steam-output"></div>
+              </div>
+            </div>
+            
+            <!-- Dynamic Steam Particles Container -->
+            <div class="steam-particles-container" id="steam-container"></div>
+          </div>
+        </section>
+
+        <!-- Section 2: Artisanal Menu -->
+        <section id="menu" class="menu-section">
+          <div class="menu-header">
+            <span class="sub-heading">Freshly Prepared Daily</span>
+            <div class="menu-title-row">
+              <h2>Our Artisanal Menu</h2>
+              <div class="menu-tabs" id="menu-tabs">
+                <button class="tab-btn active" data-tab="drinks">Drinks</button>
+                <button class="tab-btn" data-tab="bakehouse">Bakehouse</button>
+              </div>
+            </div>
+            <!-- Swipe Indicator (Mobile Only) -->
+            <div class="swipe-indicator" id="menu-swipe-indicator">
+              <span>Swipe left to view more</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="indicator-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+
+          <div class="menu-grid" id="menu-grid">
+            <!-- Drink and Food Cards will be rendered here dynamically via JS -->
+          </div>
+        </section>
+      </main>
+
+      <!-- Section 3: Our Story (About Us with Photos) -->
+      <section id="about" class="story-section">
+        <div class="story-container">
+          <div class="story-text">
+            <span class="sub-heading">About AromaBlend</span>
+            <h2>Crafted with Heart, Brewed with Art</h2>
+            <p class="story-highlight">At AromaBlend, we believe coffee is more than just a morning routine—it is a sensory ritual.</p>
+            <p>Founded in 2026, our mission has been to combine the absolute highest grade of ethically sourced single-origin arabica beans with micro-batch roasting. Every bean is tracked from farm to cup, ensuring sustainable growers get fair wages and you get an unparalleled flavor profile.</p>
+            <p>Our bakehouse follows a similar philosophy. We work exclusively with local millers for organic heritage grains and bake our pastries fresh at 4:30 AM every single morning. No shortcuts. Just clean ingredients, passion, and time.</p>
+            
+            <!-- Key Stats -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <span class="stat-num">100%</span>
+                <span class="stat-label">Organic Arabica</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-num">4:30 AM</span>
+                <span class="stat-label">Daily Fresh Bakes</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-num">12+</span>
+                <span class="stat-label">Master Baristas</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="story-images">
+            <div class="image-wrapper img-large">
+              <img src="/cafe_interior.png" alt="AromaBlend Cozy Modern Interior" />
+              <div class="img-caption">The Cozy Brew Sanctuary</div>
+            </div>
+            <div class="image-wrapper img-small">
+              <img src="/barista_craft.png" alt="Barista Crafting Latte Art" />
+              <div class="img-caption">Precision Latte Art</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Hours & Location Grid -->
+      <section id="hours-location" class="info-section">
+        <div class="section-title text-center">
+          <span class="sub-heading">Visit Us</span>
+          <h2>Locations &amp; Hours</h2>
+          <!-- Swipe Indicator (Mobile Only) -->
+          <div class="swipe-indicator" id="info-swipe-indicator">
+            <span>Swipe left to view more</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="indicator-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+        
+        <div class="info-grid">
+          <!-- Hours Card -->
+          <div class="glass-card info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <h3>Brewing Hours</h3>
+            <div class="hours-list">
+              <div class="hours-row">
+                <span>Monday - Friday</span>
+                <span>7:00 AM - 8:00 PM</span>
+              </div>
+              <div class="hours-row highlight-row">
+                <span>Saturday</span>
+                <span>8:00 AM - 9:00 PM</span>
+              </div>
+              <div class="hours-row highlight-row">
+                <span>Sunday</span>
+                <span>8:00 AM - 8:00 PM</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Location Card -->
+          <div class="glass-card info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <h3>Our Sanctuary</h3>
+            <p class="address-text">742 Evergreen Boulevard<br>Springfield, IL 62704</p>
+            <p class="phone-text">hello@aromablend.com<br>+1 (555) 438-2739</p>
+          </div>
+
+          <!-- Table Reservation Mock Card -->
+          <div class="glass-card info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <h3>Reserve a Corner</h3>
+            <p class="reserve-text">Planning a working session, reading afternoon, or a coffee tasting meetup?</p>
+            <button class="checkout-btn" style="padding: 0.6rem 1.2rem; font-size: 0.95rem; margin-top: 1rem;" onclick="alert('Table bookings coming soon in our next release!')">Book Table</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Testimonials / Reviews -->
+      <section id="reviews" class="reviews-section">
+        <div class="section-title text-center">
+          <span class="sub-heading">Reviews</span>
+          <h2>Words from our Guests</h2>
+          <!-- Swipe Indicator (Mobile Only) -->
+          <div class="swipe-indicator" id="reviews-swipe-indicator">
+            <span>Swipe left to view more</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="indicator-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+        
+        <div class="reviews-grid" id="reviews-grid">
+          <div class="glass-card review-card">
+            <div class="stars">★★★★★</div>
+            <p class="review-text">"The interactive brew machine on their site is incredibly fun, but the actual coffee is the real masterpiece. Rich crema, absolutely zero bitterness!"</p>
+            <div class="reviewer">
+              <div class="avatar">LK</div>
+              <div>
+                <h4>Liam Knight</h4>
+                <span>Espresso Purist</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="glass-card review-card">
+            <div class="stars">★★★★★</div>
+            <p class="review-text">"Perfect workspace vibes. The butter croissants plate beautifully at the Prep Lab, and in real life, they are the flakiest pastries in Springfield."</p>
+            <div class="reviewer">
+              <div class="avatar">SM</div>
+              <div>
+                <h4>Sophia Martinez</h4>
+                <span>Architect &amp; Writer</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card review-card">
+            <div class="stars">★★★★★</div>
+            <p class="review-text">"Iced Matcha Latte has a perfect earthy whisk balance. Very professional baristas and a lovely, bright glass design. AromaBlend is my daily sanctuary."</p>
+            <div class="reviewer">
+              <div class="avatar">MT</div>
+              <div>
+                <h4>Marcus Thorne</h4>
+                <span>Yoga Instructor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Section -->
+      <footer class="app-footer">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <div class="logo">
+              <span class="logo-accent">Aroma</span>&amp;Blend
+            </div>
+            <p class="brand-desc">A premium artisanal brew house marrying sensory craftsmanship with digital experiences.</p>
+            <div class="social-links">
+              <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+              <a href="#" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+              <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+            </div>
+          </div>
+          
+          <div class="footer-links">
+            <h4>Explore</h4>
+            <ul>
+              <li><a href="#menu">Menu</a></li>
+              <li><a href="#brewing">Prep Lab</a></li>
+              <li><a href="#about">Our Story</a></li>
+              <li><a href="#hours-location">Locations</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-newsletter">
+            <h4>Join the Brew Club</h4>
+            <p>Sign up to receive private micro-lot tasting invitations and fresh recipes.</p>
+            <form id="newsletter-form" class="newsletter-form">
+              <input type="email" id="newsletter-email" placeholder="Your email address" required />
+              <button type="submit" id="newsletter-submit-btn">Subscribe</button>
+            </form>
+            <div id="newsletter-feedback" class="newsletter-feedback"></div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; 2026 AromaBlend. All Rights Reserved. Crafted for premium coffee enthusiasts.</p>
+        </div>
+      </footer>
+
+      <!-- Sidebar: Cart Drawer -->
+      <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+          <h3>Your Brews &amp; Bites</h3>
+          <button id="cart-close-btn" class="close-btn" aria-label="Close cart">&times;</button>
+        </div>
+        
+        <div class="cart-items" id="cart-items">
+          <!-- Cart items will be rendered dynamically -->
+          <div class="empty-cart-message">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+            <p>Your order is empty</p>
+            <p class="sub-text">Add coffee or pastry from the menu</p>
+          </div>
+        </div>
+
+        <div class="cart-footer">
+          <div class="price-row">
+            <span>Subtotal</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <button id="checkout-btn" class="checkout-btn" disabled>Place Order</button>
+        </div>
+      </aside>
+      
+      <div class="cart-backdrop" id="cart-backdrop"></div>
+
+      <!-- Celebration/Checkout Modal -->
+      <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-card">
+          <div class="modal-success-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h2>Order Received!</h2>
+          <p>Our barista is refining your custom brew. Enjoy the rich aroma!</p>
+          <div class="order-receipt" id="order-receipt">
+            <!-- Receipt items -->
+          </div>
+          <button id="close-modal-btn" class="close-modal-btn">Awesome, thanks!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script imports -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
