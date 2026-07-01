@@ -175,7 +175,10 @@ async function loadMenuData() {
 function setupEventListeners() {
   // Welcome Overlay click
   const closeWelcome = () => {
-    dom.welcomeScreen.classList.add('fade-out');
+    dom.welcomeScreen.classList.add('exit-active');
+    setTimeout(() => {
+      dom.welcomeScreen.classList.add('fade-out');
+    }, 700);
   };
   dom.welcomeEnterBtnMain.addEventListener('click', closeWelcome);
   dom.welcomeVisitStoreBtn.addEventListener('click', closeWelcome);
