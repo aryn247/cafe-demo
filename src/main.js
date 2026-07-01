@@ -176,6 +176,7 @@ function setupEventListeners() {
   // Welcome Overlay click
   const closeWelcome = () => {
     dom.welcomeScreen.classList.add('exit-active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setTimeout(() => {
       dom.welcomeScreen.classList.add('fade-out');
     }, 700);
@@ -186,13 +187,17 @@ function setupEventListeners() {
   // Re-open Welcome page from Navigation links
   dom.navWelcomeTrigger.addEventListener('click', (e) => {
     e.preventDefault();
+    dom.welcomeScreen.classList.remove('exit-active');
     dom.welcomeScreen.classList.remove('fade-out');
+    window.scrollTo({ top: 0, behavior: 'instant' });
   });
   if (dom.mobileWelcomeTrigger) {
     dom.mobileWelcomeTrigger.addEventListener('click', (e) => {
       e.preventDefault();
       toggleMobileMenu(false);
+      dom.welcomeScreen.classList.remove('exit-active');
       dom.welcomeScreen.classList.remove('fade-out');
+      window.scrollTo({ top: 0, behavior: 'instant' });
     });
   }
 
