@@ -1,10 +1,10 @@
 import './style.css';
 
 // 1. Menu Datasets
-const DRINKS = [
+const COFFEE = [
   {
     id: 'espresso',
-    category: 'drinks',
+    category: 'coffee',
     name: 'Classic Espresso',
     badge: 'Rich & Intense',
     description: 'A concentrated shot of pure arabica coffee, offering a robust aroma and caramel-toned crema.',
@@ -15,7 +15,7 @@ const DRINKS = [
   },
   {
     id: 'cappuccino',
-    category: 'drinks',
+    category: 'coffee',
     name: 'Velvety Cappuccino',
     badge: 'House Favorite',
     description: 'Equal parts rich espresso, steamed milk, and a thick, cloud-like layer of velvety milk foam.',
@@ -25,19 +25,8 @@ const DRINKS = [
     special: true
   },
   {
-    id: 'matcha',
-    category: 'drinks',
-    name: 'Iced Matcha Latte',
-    badge: 'Artisanal Green',
-    description: 'Vibrant Japanese ceremonial matcha whisked with ice-cold milk, creating creamy, earthy layers.',
-    price: 5.25,
-    gradient: 'linear-gradient(to top, #2d6a4f 0%, #74c69d 60%, #e8f5e9 100%)',
-    foamColor: '#d8f3dc', // Green froth
-    special: false
-  },
-  {
     id: 'caramel',
-    category: 'drinks',
+    category: 'coffee',
     name: 'Caramel Macchiato',
     badge: 'Sweet & Creamy',
     description: 'Freshly steamed milk stained with espresso, sweet vanilla syrup, and a crosshatch caramel drizzle.',
@@ -48,10 +37,46 @@ const DRINKS = [
   }
 ];
 
-const BAKEHOUSE = [
+const TEAS = [
+  {
+    id: 'matcha',
+    category: 'teas',
+    name: 'Iced Matcha Latte',
+    badge: 'Artisanal Green',
+    description: 'Vibrant Japanese ceremonial matcha whisked with ice-cold milk, creating creamy, earthy layers.',
+    price: 5.25,
+    gradient: 'linear-gradient(to top, #2d6a4f 0%, #74c69d 60%, #e8f5e9 100%)',
+    foamColor: '#d8f3dc', // Green froth
+    special: false
+  },
+  {
+    id: 'chamomile',
+    category: 'teas',
+    name: 'Organic Chamomile',
+    badge: 'Calming Herbal',
+    description: 'Soothe your senses with organic golden chamomile blossoms offering floral notes and honey undertones.',
+    price: 4.50,
+    gradient: 'linear-gradient(to top, #6f5d30 0%, #bf993b 80%)',
+    foamColor: 'rgba(255, 235, 175, 0.2)',
+    special: false
+  },
+  {
+    id: 'darjeeling',
+    category: 'teas',
+    name: 'Royal Darjeeling',
+    badge: 'Champagne of Teas',
+    description: 'Exquisite black tea from Darjeeling Himalayan estate, characterized by bright amber tones and floral muscatel notes.',
+    price: 4.95,
+    gradient: 'linear-gradient(to top, #200b03 0%, #683011 80%)',
+    foamColor: 'rgba(217, 125, 56, 0.15)',
+    special: true
+  }
+];
+
+const FOOD = [
   {
     id: 'croissant',
-    category: 'bakehouse',
+    category: 'food',
     name: 'Butter Croissant',
     badge: 'Baked Daily',
     description: 'Flaky, golden-brown puff pastry baked fresh each morning with premium organic butter.',
@@ -61,7 +86,7 @@ const BAKEHOUSE = [
   },
   {
     id: 'muffin',
-    category: 'bakehouse',
+    category: 'food',
     name: 'Chocolate Muffin',
     badge: 'Decadent Cup',
     description: 'Double chocolate muffin filled with molten fudge chunks and topped with cocoa dusting.',
@@ -71,7 +96,7 @@ const BAKEHOUSE = [
   },
   {
     id: 'cheesecake',
-    category: 'bakehouse',
+    category: 'food',
     name: 'Matcha Cheesecake',
     badge: 'House Specialty',
     description: 'Creamy New York style cheesecake infused with Uji matcha on a graham cracker base.',
@@ -81,7 +106,7 @@ const BAKEHOUSE = [
   },
   {
     id: 'toast',
-    category: 'bakehouse',
+    category: 'food',
     name: 'Avocado Toast',
     badge: 'Barista Choice',
     description: 'Artisanal sourdough toast layered with seasoned mashed avocado, cherry tomatoes, and microgreens.',
@@ -92,13 +117,13 @@ const BAKEHOUSE = [
 ];
 
 // Combine all items for easy lookup
-const ALL_ITEMS = [...DRINKS, ...BAKEHOUSE];
+const ALL_ITEMS = [...COFFEE, ...TEAS, ...FOOD];
 
 // 2. Application State
 const state = {
   cart: [], // items: { id, name, price, qty }
   isBrewing: false,
-  activeCategory: 'drinks', // 'drinks' or 'bakehouse'
+  activeCategory: 'coffee', // 'coffee', 'teas', or 'food'
   
   // Security & Authentication session states
   isLoggedIn: false,
@@ -112,7 +137,14 @@ const state = {
 // 3. DOM Cache
 const dom = {
   welcomeScreen: document.getElementById('welcome-screen'),
-  enterCafeBtn: document.getElementById('enter-cafe-btn'),
+  welcomeEnterBtnMain: document.getElementById('welcome-enter-btn-main'),
+  welcomeVisitStoreBtn: document.getElementById('welcome-visit-store-btn'),
+  navWelcomeTrigger: document.getElementById('nav-welcome-trigger'),
+  mobileWelcomeTrigger: document.getElementById('mobile-welcome-trigger'),
+
+  // Accordion inside Magazine Welcome Overlay
+  accordionItems: document.querySelectorAll('.accordion-item'),
+
   menuGrid: document.getElementById('menu-grid'),
   menuTabs: document.getElementById('menu-tabs'),
   
@@ -125,12 +157,18 @@ const dom = {
   cartSubtotal: document.getElementById('cart-subtotal'),
   checkoutBtn: document.getElementById('checkout-btn'),
   
+  // Header Actions & CTA Buttons
+  accountTriggerBtn: document.getElementById('account-trigger-btn'),
+  accountBtnText: document.getElementById('account-btn-text'),
+  
   // Mobile Navigation Cache
   mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
   mobileMenuClose: document.getElementById('mobile-menu-close'),
   mobileNavDrawer: document.getElementById('mobile-nav-drawer'),
   mobileNavBackdrop: document.getElementById('mobile-nav-backdrop'),
   mobileNavLinks: document.querySelectorAll('.mobile-nav-link'),
+  mobileAccountTrigger: document.getElementById('mobile-account-trigger'),
+  mobileAccountText: document.getElementById('mobile-account-text'),
   
   // Swipe indicators
   menuSwipeIndicator: document.getElementById('menu-swipe-indicator'),
@@ -148,6 +186,7 @@ const dom = {
 
   // Auth modal
   authModal: document.getElementById('auth-modal'),
+  authCloseBtn: document.getElementById('auth-close-btn'),
   authPhoneStep: document.getElementById('auth-phone-step'),
   authOtpStep: document.getElementById('auth-otp-step'),
   authPhoneInput: document.getElementById('auth-phone'),
@@ -205,7 +244,37 @@ function init() {
 // 5. Setup Listeners
 function setupEventListeners() {
   // Welcome Overlay click
-  dom.enterCafeBtn.addEventListener('click', handleEnterCafe);
+  const closeWelcome = () => {
+    dom.welcomeScreen.classList.add('fade-out');
+  };
+  dom.welcomeEnterBtnMain.addEventListener('click', closeWelcome);
+  dom.welcomeVisitStoreBtn.addEventListener('click', closeWelcome);
+
+  // Re-open Welcome page from Navigation links
+  dom.navWelcomeTrigger.addEventListener('click', (e) => {
+    e.preventDefault();
+    dom.welcomeScreen.classList.remove('fade-out');
+  });
+  if (dom.mobileWelcomeTrigger) {
+    dom.mobileWelcomeTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleMobileMenu(false);
+      dom.welcomeScreen.classList.remove('fade-out');
+    });
+  }
+
+  // Interactive Editorial Accordion inside Welcome Screen
+  dom.accordionItems.forEach(item => {
+    item.addEventListener('click', () => {
+      // If already active, do nothing
+      if (item.classList.contains('active')) return;
+      
+      // Close currently active card
+      dom.accordionItems.forEach(card => card.classList.remove('active'));
+      // Open selected card
+      item.classList.add('active');
+    });
+  });
 
   // Drawer Toggles
   dom.cartToggleBtn.addEventListener('click', () => toggleCart(true));
@@ -236,6 +305,23 @@ function setupEventListeners() {
   dom.authBackBtn.addEventListener('click', handleAuthBack);
   setupOtpAutofocus();
 
+  // Close Authentication Wall trigger
+  if (dom.authCloseBtn) {
+    dom.authCloseBtn.addEventListener('click', () => {
+      dom.authModal.classList.remove('open');
+    });
+  }
+
+  // Create Account Header bindings
+  dom.accountTriggerBtn.addEventListener('click', handleAccountClick);
+  if (dom.mobileAccountTrigger) {
+    dom.mobileAccountTrigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleMobileMenu(false);
+      handleAccountClick();
+    });
+  }
+
   // Checkout Details Listeners
   dom.checkoutBtn.addEventListener('click', handleCheckoutTrigger);
   dom.diningDineInBtn.addEventListener('click', () => toggleDiningOption('dinein'));
@@ -260,31 +346,68 @@ function setupEventListeners() {
     });
   });
 
-  // Navigation Click Handler (Smooth Scroll - Desktop)
-  dom.navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
+  // Category Selector Link Triggers (Coffee / Teas / Food navigation anchors)
+  document.querySelectorAll('.category-trigger, .mobile-category-trigger').forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
       e.preventDefault();
-      const targetId = link.getAttribute('href');
-      const targetElement = document.querySelector(targetId);
+      if (state.isBrewing) return;
+
+      const cat = trigger.getAttribute('data-category');
       
-      dom.navLinks.forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-
-      if (targetElement) {
+      // Update Menu Tab Visuals
+      dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === cat) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      
+      state.activeCategory = cat;
+      renderMenu();
+      setupSwipeIndicators();
+      
+      // Close mobile drawer if open
+      toggleMobileMenu(false);
+      
+      // Smooth scroll directly to the Menu section
+      const menuSec = document.getElementById('menu');
+      if (menuSec) {
         const headerOffset = 90;
-        const elementPosition = targetElement.getBoundingClientRect().top;
+        const elementPosition = menuSec.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
       }
     });
   });
 
+  // Navigation Click Handler (Smooth Scroll - Desktop)
+  dom.navLinks.forEach(link => {
+    if (link.classList.contains('category-trigger') || link.id === 'nav-welcome-trigger') return;
+
+    e.preventDefault();
+    const targetId = link.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
+    
+    dom.navLinks.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+
+    if (targetElement) {
+      const headerOffset = 90;
+      const elementPosition = targetElement.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  });
+
   // Navigation Click Handler (Smooth Scroll - Mobile Drawer)
   dom.mobileNavLinks.forEach(link => {
+    if (link.classList.contains('mobile-category-trigger') || link.id === 'mobile-welcome-trigger') return;
+
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const targetId = link.getAttribute('href');
@@ -298,7 +421,7 @@ function setupEventListeners() {
         const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-        // Slight timeout to allow mobile keyboard/menu layouts to adjust
+        // Slight timeout to allow mobile drawer animation to clear
         setTimeout(() => {
           window.scrollTo({
             top: offsetPosition,
@@ -315,15 +438,7 @@ function setupEventListeners() {
   }
 }
 
-// 6. Enter Cafe Welcome Screen Transition
-function handleEnterCafe() {
-  dom.welcomeScreen.classList.add('fade-out');
-  setTimeout(() => {
-    dom.welcomeScreen.style.display = 'none';
-  }, 900);
-}
-
-// 7. Toggle Cart Drawer
+// 6. Toggle Cart Drawer
 function toggleCart(isOpen) {
   if (isOpen) {
     dom.cartDrawer.classList.add('open');
@@ -334,7 +449,7 @@ function toggleCart(isOpen) {
   }
 }
 
-// 8. Toggle Mobile Navigation Drawer
+// 7. Toggle Mobile Navigation Drawer
 function toggleMobileMenu(isOpen) {
   if (isOpen) {
     dom.mobileNavDrawer.classList.add('open');
@@ -345,14 +460,21 @@ function toggleMobileMenu(isOpen) {
   }
 }
 
-// 9. Render Menu Cards Dynamically
+// 8. Render Menu Cards Dynamically
 function renderMenu() {
-  const currentItems = state.activeCategory === 'drinks' ? DRINKS : BAKEHOUSE;
+  let currentItems = [];
+  if (state.activeCategory === 'coffee') {
+    currentItems = COFFEE;
+  } else if (state.activeCategory === 'teas') {
+    currentItems = TEAS;
+  } else {
+    currentItems = FOOD;
+  }
+
+  const isFood = state.activeCategory === 'food';
 
   dom.menuGrid.innerHTML = currentItems.map(item => {
-    const isDrink = item.category === 'drinks';
-    
-    const visualHtml = isDrink 
+    const visualHtml = !isFood
       ? `
         <div class="static-cup-icon">
           <div class="static-liquid" style="--drink-grad: ${item.gradient}"></div>
@@ -379,7 +501,7 @@ function renderMenu() {
         <div class="drink-footer">
           <span class="drink-price">$${item.price.toFixed(2)}</span>
           <button class="brew-btn" id="btn-craft-${item.id}" data-id="${item.id}">
-            ${isDrink ? 'Brew This' : 'Plate This'}
+            ${!isFood ? 'Brew This' : 'Plate This'}
           </button>
         </div>
       </div>
@@ -395,7 +517,7 @@ function renderMenu() {
   });
 }
 
-// 10. Dynamic Steam Particles
+// 9. Dynamic Steam Particles
 let steamInterval = null;
 function startSteam() {
   if (steamInterval) clearInterval(steamInterval);
@@ -422,14 +544,14 @@ function stopSteam() {
   }
 }
 
-// 11. Consolidated Preparation Sequence (Drinks & Foods)
+// 10. Prep Station Animations
 function triggerCraftSequence(itemId) {
   if (state.isBrewing) return;
   state.isBrewing = true;
   
   const item = ALL_ITEMS.find(i => i.id === itemId);
   state.currentCraftingItem = item;
-  const isDrink = item.category === 'drinks';
+  const isFood = item.category === 'food';
   
   // Disable all action buttons
   document.querySelectorAll('.brew-btn').forEach(btn => btn.disabled = true);
@@ -441,7 +563,7 @@ function triggerCraftSequence(itemId) {
   // Focus view on prep station
   document.getElementById('brewing').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-  if (isDrink) {
+  if (!isFood) {
     // --- DRINK BREWING SEQUENCE ---
     dom.machineStatus.innerText = `Preparing cup for ${item.name}...`;
 
@@ -548,7 +670,7 @@ function animateFlyToCart(element, item) {
   element.style.setProperty('--dx', `${dx}px`);
   element.style.setProperty('--dy', `${dy}px`);
   
-  element.className = item.category === 'drinks' 
+  element.className = item.category !== 'food' 
     ? 'coffee-cup cup-flying' 
     : 'serving-plate plate-flying';
   
@@ -565,7 +687,7 @@ function animateFlyToCart(element, item) {
     setTimeout(() => dom.cartToggleBtn.classList.remove('pop'), 300);
     
     // Set dynamic text on cross-sell modal depending on item category
-    if (item.category === 'drinks') {
+    if (item.category === 'coffee' || item.category === 'teas') {
       dom.crossSellTitle.innerText = 'Pair it with a Bite?';
       dom.crossSellDesc.innerText = 'Your drink is prepared! Would you like to order anything else?';
       dom.crossSellYesBtn.innerText = 'Yes, show pastries';
@@ -606,6 +728,7 @@ function addToCart(item) {
   updateCartUI();
 }
 
+// Remove from cart
 function removeFromCart(itemId) {
   const itemIndex = state.cart.findIndex(item => item.id === itemId);
   if (itemIndex > -1) {
@@ -677,9 +800,10 @@ function handleCrossSellYes() {
   dom.crossSellModal.classList.remove('open');
   
   // Toggle tab button and show correct category
-  const targetCategory = state.currentCraftingItem && state.currentCraftingItem.category === 'drinks'
-    ? 'bakehouse'
-    : 'drinks';
+  const currentCategory = state.currentCraftingItem ? state.currentCraftingItem.category : 'coffee';
+  const targetCategory = (currentCategory === 'coffee' || currentCategory === 'teas')
+    ? 'food'
+    : 'coffee';
 
   dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => {
     if (btn.getAttribute('data-tab') === targetCategory) {
@@ -702,12 +826,31 @@ function handleCrossSellYes() {
   }
 }
 
+// Close modal and open cart drawer
 function handleCrossSellNo() {
   dom.crossSellModal.classList.remove('open');
   toggleCart(true);
 }
 
-// 15. Authentication Wall Handlers (Spam Blocking)
+// 15. Authentication & Account Management Handlers
+function handleAccountClick() {
+  if (state.isLoggedIn) {
+    // Simulated logout toggle
+    if (confirm('You are already logged in. Would you like to sign out?')) {
+      state.isLoggedIn = false;
+      state.user = null;
+      dom.accountBtnText.innerText = 'Create Account';
+      if (dom.mobileAccountText) dom.mobileAccountText.innerText = 'Create Account';
+    }
+  } else {
+    // Show phone authentication screen
+    dom.authPhoneStep.style.display = 'block';
+    dom.authOtpStep.style.display = 'none';
+    dom.authPhoneInput.value = '';
+    dom.authModal.classList.add('open');
+  }
+}
+
 function handleCheckoutTrigger() {
   toggleCart(false); // Close cart drawer
   
@@ -748,6 +891,10 @@ function handleVerifyOtp() {
     state.isLoggedIn = true;
     state.user = { phone: dom.authPhoneInput.value };
     
+    // Update Header trigger labels
+    dom.accountBtnText.innerText = 'Hi, Aryan';
+    if (dom.mobileAccountText) dom.mobileAccountText.innerText = 'Hi, Aryan';
+
     // Close auth modal and redirect to checkout details
     dom.authModal.classList.remove('open');
     setTimeout(openCheckoutDetails, 300);
@@ -832,9 +979,6 @@ function handleLocationVerify() {
         // Geolocation coordinates captured successfully!
         state.geolocationVerified = true;
         
-        // In a live server, we would calculate distance to the cafe coordinates.
-        // For this premium demo, we calculate coordinates and show a beautiful success statement
-        // simulating the geofence checker (showing they are within 8m range).
         setTimeout(() => {
           dom.locationStatus.className = 'loc-badge status-success';
           dom.locationStatus.innerText = `Verified: Inside Cafe (Approx 8m distance)`;
@@ -949,7 +1093,7 @@ function handleNewsletterSubmit(e) {
 
 // 18. Scroll Observer for Active Link Highlights
 function setupScrollHighlight() {
-  const sections = ['menu', 'brewing', 'about', 'hours-location'];
+  const sections = ['online-store', 'hours-location', 'reviews'];
   const observerOptions = {
     root: null,
     rootMargin: '-30% 0px -60% 0px',
@@ -959,11 +1103,16 @@ function setupScrollHighlight() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        const id = entry.target.getAttribute('id');
+        let id = entry.target.getAttribute('id');
         
+        // Map store wrapper to individual categories for highlight targets
+        let highlightId = id;
+        if (id === 'online-store') highlightId = 'menu';
+
         // Highlight Desktop Link
         dom.navLinks.forEach(link => {
-          if (link.getAttribute('href') === `#${id}`) {
+          const href = link.getAttribute('href');
+          if (href === `#${highlightId}` || (highlightId === 'menu' && link.classList.contains('category-trigger'))) {
             link.classList.add('active');
           } else {
             link.classList.remove('active');
@@ -972,7 +1121,8 @@ function setupScrollHighlight() {
 
         // Highlight Mobile Link
         dom.mobileNavLinks.forEach(link => {
-          if (link.getAttribute('href') === `#${id}`) {
+          const href = link.getAttribute('href');
+          if (href === `#${highlightId}` || (highlightId === 'menu' && link.classList.contains('mobile-category-trigger'))) {
             link.classList.add('active');
           } else {
             link.classList.remove('active');
@@ -1001,7 +1151,6 @@ function setupSwipeIndicators() {
       }
     };
     
-    // Reset scroll left to 0 in case it was swiped on a different category
     dom.menuGrid.scrollLeft = 0;
     dom.menuGrid.addEventListener('scroll', dismissMenuSwipe);
   }

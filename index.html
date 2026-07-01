@@ -11,20 +11,103 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- Welcome Overlay Screen -->
+    <!-- Welcome Full-Page Overlay Page (Asymmetric Magazine Design) -->
     <div class="welcome-overlay" id="welcome-screen">
-      <div class="welcome-glass-card">
-        <div class="welcome-logo">
-          <span class="logo-accent">Aroma</span>&amp;Blend
+      <!-- Visit Online Store Header Gateway (Top-Right) -->
+      <div class="welcome-header-bar">
+        <button id="welcome-visit-store-btn" class="welcome-store-btn">Visit Online Store &rarr;</button>
+      </div>
+
+      <div class="welcome-container magazine-layout">
+        <!-- Left Side: Overlapping Floating Art Gallery Collage -->
+        <div class="welcome-collage">
+          <div class="collage-item item-1">
+            <img src="/cafe_interior.png" alt="AromaBlend Sanctuary" />
+            <div class="collage-badge">Cozy Brew Space</div>
+          </div>
+          <div class="collage-item item-2">
+            <img src="/barista_craft.png" alt="Master Latte Pouring" />
+            <div class="collage-badge">Precision Craft</div>
+          </div>
+          <div class="collage-item item-3">
+            <img src="/cafe_interior.png" alt="Events Gathering" style="filter: brightness(0.65) sepia(0.2);" />
+            <div class="collage-badge">Warm Communities</div>
+          </div>
         </div>
-        <span class="welcome-subtitle">EST. 2026</span>
-        <h1 class="welcome-tagline">Crafting Coffee &amp; Culinary Art</h1>
-        <div class="welcome-divider"></div>
-        <p class="welcome-desc">Experience our digital brew house where artisanal recipes meet fluid, interactive animations.</p>
-        <button id="enter-cafe-btn" class="enter-btn">
-          <span>Enter Cafe</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="enter-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </button>
+
+        <!-- Right Side: Brand Header & Interactive Accordion -->
+        <div class="welcome-editorial">
+          <div class="welcome-brand">
+            <span class="welcome-tagline">Established 2012</span>
+            <div class="logo welcome-logo">
+              <span class="logo-accent">Aroma</span>&amp;Blend
+            </div>
+            <div class="welcome-divider"></div>
+          </div>
+
+          <!-- Interactive Magazine Accordion -->
+          <div class="magazine-accordion" id="magazine-accordion">
+            <!-- Accordion Item 1 -->
+            <div class="accordion-item active" data-idx="0">
+              <div class="accordion-header">
+                <span class="accordion-num">01</span>
+                <h3>Our Heritage</h3>
+                <svg class="accordion-arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="accordion-content">
+                <p>Founded by certified Q-graders, AromaBlend is Springfield's premier sanctuary for organic coffees. We partner directly with organic family estates globally, securing micro-lots of single-origin Arabica beans roasted locally in micro-batches daily.</p>
+              </div>
+            </div>
+
+            <!-- Accordion Item 2 -->
+            <div class="accordion-item" data-idx="1">
+              <div class="accordion-header">
+                <span class="accordion-num">02</span>
+                <h3>The Coffee Craft</h3>
+                <svg class="accordion-arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="accordion-content">
+                <p>Experience an elite brew menu. From robust classic double espresso shots and velvety lattes featuring master latte art, to calming organic chamomile tea infusions and single-origin Darjeeling leaf tea brews.</p>
+              </div>
+            </div>
+
+            <!-- Accordion Item 3 -->
+            <div class="accordion-item" data-idx="2">
+              <div class="accordion-header">
+                <span class="accordion-num">03</span>
+                <h3>Morning Bakehouse</h3>
+                <svg class="accordion-arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="accordion-content">
+                <p>Our bakers start preparation at 4:30 AM every morning. Butter croissants and chocolate muffins are baked fresh to order, complementing plated sourdough avocado toasts and green tea cheesecakes.</p>
+              </div>
+            </div>
+
+            <!-- Accordion Item 4 -->
+            <div class="accordion-item" data-idx="3">
+              <div class="accordion-header">
+                <span class="accordion-num">04</span>
+                <h3>Celebrate &amp; Host</h3>
+                <svg class="accordion-arrow-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="accordion-content">
+                <p>Plan your special birthday gatherings, group coffee cupping workshops, or corporate meetups. We offer reserved glasshouse spaces and customizable catering menu spreads.</p>
+                <div class="accordion-thumbs" style="display: flex; gap: 0.6rem; margin-top: 0.8rem;">
+                  <img src="/cafe_interior.png" alt="Cozy seating spaces" class="acc-thumb" style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.1);" />
+                  <img src="/barista_craft.png" alt="Pouring detail" class="acc-thumb" style="width: 55px; height: 55px; object-fit: cover; border-radius: 8px; border: 1.5px solid rgba(255,255,255,0.1);" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Enter Store CTA Button -->
+          <div class="magazine-footer-action" style="margin-top: 2rem;">
+            <button id="welcome-enter-btn-main" class="enter-btn welcome-main-btn">
+              <span>Enter Brew House</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="enter-arrow"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -37,10 +120,17 @@
         <button id="mobile-menu-close" class="close-btn" aria-label="Close Mobile Menu">&times;</button>
       </div>
       <nav class="mobile-nav-links">
-        <a href="#menu" class="mobile-nav-link active">Menu</a>
-        <a href="#brewing" class="mobile-nav-link">Prep Lab</a>
-        <a href="#about" class="mobile-nav-link">Our Story</a>
-        <a href="#hours-location" class="mobile-nav-link">Hours &amp; Location</a>
+        <a href="#welcome-screen" class="mobile-nav-link" id="mobile-welcome-trigger">Home / Our Story</a>
+        <a href="#menu" class="mobile-nav-link mobile-category-trigger" data-category="coffee">Coffee</a>
+        <a href="#menu" class="mobile-nav-link mobile-category-trigger" data-category="teas">Teas</a>
+        <a href="#menu" class="mobile-nav-link mobile-category-trigger" data-category="food">Food</a>
+        <a href="#hours-location" class="mobile-nav-link">Locations</a>
+        
+        <!-- Mobile Create Account -->
+        <a href="#" id="mobile-account-trigger" class="mobile-nav-link" style="color: hsl(var(--color-primary-light)); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span id="mobile-account-text">Create Account</span>
+        </a>
       </nav>
     </div>
     <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
@@ -58,21 +148,30 @@
         </div>
         
         <nav class="nav-links">
-          <a href="#menu" class="nav-link active">Menu</a>
-          <a href="#brewing" class="nav-link">Prep Lab</a>
-          <a href="#about" class="nav-link">Our Story</a>
-          <a href="#hours-location" class="nav-link">Hours &amp; Location</a>
+          <a href="#welcome-screen" class="nav-link" id="nav-welcome-trigger">Home / Our Story</a>
+          <a href="#menu" class="nav-link category-trigger" data-category="coffee">Coffee</a>
+          <a href="#menu" class="nav-link category-trigger" data-category="teas">Teas</a>
+          <a href="#menu" class="nav-link category-trigger" data-category="food">Food</a>
+          <a href="#hours-location" class="nav-link">Locations</a>
         </nav>
         
-        <button id="cart-toggle-btn" class="cart-button" aria-label="Open Order Details">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-icon"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-          <span>Cart</span>
-          <span id="cart-badge" class="cart-badge">0</span>
-        </button>
+        <div class="header-actions-group">
+          <!-- Account Button (Person Emoji / Icon removed to prevent shift off-screen) -->
+          <button id="account-trigger-btn" class="account-btn-nav">
+            <span id="account-btn-text">Create Account</span>
+          </button>
+
+          <!-- Cart Button -->
+          <button id="cart-toggle-btn" class="cart-button" aria-label="Open Order Details">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="cart-icon"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span>Cart</span>
+            <span id="cart-badge" class="cart-badge">0</span>
+          </button>
+        </div>
       </header>
 
-      <!-- Main Layout -->
-      <main class="main-container">
+      <!-- Main Layout (Online Store) -->
+      <main class="main-container" id="online-store">
         <!-- Section 1: Prep / Brewing Lab (Showcase) -->
         <section id="brewing" class="brewing-lab">
           <div class="glass-card lab-header">
@@ -124,8 +223,9 @@
             <div class="menu-title-row">
               <h2>Our Artisanal Menu</h2>
               <div class="menu-tabs" id="menu-tabs">
-                <button class="tab-btn active" data-tab="drinks">Drinks</button>
-                <button class="tab-btn" data-tab="bakehouse">Bakehouse</button>
+                <button class="tab-btn active" data-tab="coffee">Coffee</button>
+                <button class="tab-btn" data-tab="teas">Teas</button>
+                <button class="tab-btn" data-tab="food">Food</button>
               </div>
             </div>
             <!-- Swipe Indicator (Mobile Only) -->
@@ -140,46 +240,6 @@
           </div>
         </section>
       </main>
-
-      <!-- Section 3: Our Story (About Us with Photos) -->
-      <section id="about" class="story-section">
-        <div class="story-container">
-          <div class="story-text">
-            <span class="sub-heading">About AromaBlend</span>
-            <h2>Crafted with Heart, Brewed with Art</h2>
-            <p class="story-highlight">At AromaBlend, we believe coffee is more than just a morning routine—it is a sensory ritual.</p>
-            <p>Founded in 2026, our mission has been to combine the absolute highest grade of ethically sourced single-origin arabica beans with micro-batch roasting. Every bean is tracked from farm to cup, ensuring sustainable growers get fair wages and you get an unparalleled flavor profile.</p>
-            <p>Our bakehouse follows a similar philosophy. We work exclusively with local millers for organic heritage grains and bake our pastries fresh at 4:30 AM every single morning. No shortcuts. Just clean ingredients, passion, and time.</p>
-            
-            <!-- Key Stats -->
-            <div class="stats-grid">
-              <div class="stat-card">
-                <span class="stat-num">100%</span>
-                <span class="stat-label">Organic Arabica</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-num">4:30 AM</span>
-                <span class="stat-label">Daily Fresh Bakes</span>
-              </div>
-              <div class="stat-card">
-                <span class="stat-num">12+</span>
-                <span class="stat-label">Master Baristas</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="story-images">
-            <div class="image-wrapper img-large">
-              <img src="/cafe_interior.png" alt="AromaBlend Cozy Modern Interior" />
-              <div class="img-caption">The Cozy Brew Sanctuary</div>
-            </div>
-            <div class="image-wrapper img-small">
-              <img src="/barista_craft.png" alt="Barista Crafting Latte Art" />
-              <div class="img-caption">Precision Latte Art</div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <!-- Section 4: Hours & Location Grid -->
       <section id="hours-location" class="info-section">
@@ -226,7 +286,7 @@
             <p class="phone-text">hello@aromablend.com<br>+1 (555) 438-2739</p>
           </div>
 
-          <!-- Table Reservation Mock Card -->
+          <!-- Table Reservation Card -->
           <div class="glass-card info-card">
             <div class="info-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -309,7 +369,6 @@
             <ul>
               <li><a href="#menu">Menu</a></li>
               <li><a href="#brewing">Prep Lab</a></li>
-              <li><a href="#about">Our Story</a></li>
               <li><a href="#hours-location">Locations</a></li>
             </ul>
           </div>
@@ -372,9 +431,12 @@
         </div>
       </div>
 
-      <!-- Authentication Wall Modal -->
+      <!-- Authentication Wall Modal (Includes dynamic Close Button) -->
       <div class="modal-overlay" id="auth-modal">
-        <div class="modal-card auth-card">
+        <div class="modal-card auth-card" style="position: relative;">
+          <!-- Close Auth Modal Button -->
+          <button id="auth-close-btn" class="close-btn" style="position: absolute; top: 1.2rem; right: 1.5rem; font-size: 1.8rem; line-height: 1; border: none; background: none; color: hsl(var(--color-text-muted)); cursor: pointer;" aria-label="Close Authentication Modal">&times;</button>
+          
           <div class="modal-success-icon auth-icon" style="border-color: hsl(var(--color-primary)); color: hsl(var(--color-primary)); background: rgba(217, 125, 56, 0.1);">
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shield-lock-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><rect x="9" y="11" width="6" height="4" rx="1"/><path d="M12 11V9a2 2 0 1 0-4 0"/></svg>
           </div>
@@ -395,7 +457,7 @@
             <p class="otp-sent-txt" style="font-size: 0.88rem; color: hsl(var(--color-text-muted)); margin-bottom: 1.2rem;">Enter the 4-digit code sent to your phone (Demo Code: <strong style="color: hsl(var(--color-primary-light));">1234</strong>)</p>
             <div class="otp-inputs" style="display: flex; justify-content: center; gap: 0.8rem; margin: 1rem 0;">
               <input type="text" class="otp-digit" data-idx="0" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
-              <input type="text" class="otp-digit" data-idx="1" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
+              <input type="text" class="otp-digit" data-idx="1" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(255,255,255,0.03); color: white; outline: none;" />
               <input type="text" class="otp-digit" data-idx="2" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
               <input type="text" class="otp-digit" data-idx="3" maxlength="1" style="width: 46px; height: 50px; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: white; outline: none;" />
             </div>
@@ -405,7 +467,7 @@
         </div>
       </div>
 
-      <!-- Detailed Checkout Modal (Dining & Geolocation Checks) -->
+      <!-- Detailed Checkout Modal -->
       <div class="modal-overlay" id="checkout-details-modal">
         <div class="modal-card checkout-details-card" style="max-width: 480px;">
           <h2>Checkout Verification</h2>
