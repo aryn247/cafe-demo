@@ -111,6 +111,185 @@
       </div>
     </div>
 
+    <!-- Admin & Staff Portal View Overlay -->
+    <div class="admin-portal-overlay" id="admin-portal">
+      <!-- 1. Staff PIN Login Screen -->
+      <div class="admin-login-card" id="admin-login-screen">
+        <button class="close-admin-btn" id="admin-login-close-btn">&times;</button>
+        <div class="logo welcome-logo">
+          <span class="logo-accent">Aroma</span>&amp;Blend
+        </div>
+        <p class="admin-subtitle">Staff &amp; Partner Verification Portal</p>
+        
+        <div class="pin-display">
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+        </div>
+        <input type="password" id="admin-pin-hidden" maxlength="4" autofocus autocomplete="off" />
+
+        <div class="pin-pad">
+          <button class="pin-btn" data-val="1">1</button>
+          <button class="pin-btn" data-val="2">2</button>
+          <button class="pin-btn" data-val="3">3</button>
+          <button class="pin-btn" data-val="4">4</button>
+          <button class="pin-btn" data-val="5">5</button>
+          <button class="pin-btn" data-val="6">6</button>
+          <button class="pin-btn" data-val="7">7</button>
+          <button class="pin-btn" data-val="8">8</button>
+          <button class="pin-btn" data-val="9">9</button>
+          <button class="pin-btn clear" id="pin-clear">C</button>
+          <button class="pin-btn" data-val="0">0</button>
+          <button class="pin-btn backspace" id="pin-backspace">&larr;</button>
+        </div>
+        <p id="admin-login-error" class="admin-error-text"></p>
+      </div>
+
+      <!-- 2. Staff Command Dashboard (Active state) -->
+      <div class="admin-dashboard-container hidden-dashboard" id="admin-dashboard-panel">
+        <header class="admin-dash-header">
+          <div class="logo">
+            <span class="logo-accent">Aroma</span>&amp;Blend <span class="dash-badge">Command Center</span>
+          </div>
+          
+          <div class="admin-dash-nav">
+            <button class="dash-nav-btn active" data-tab="orders">Orders Feed</button>
+            <button class="dash-nav-btn" data-tab="inventory">Menu &amp; Stock</button>
+            <button class="dash-nav-btn" data-tab="reservations">Bookings</button>
+          </div>
+
+          <div class="admin-dash-actions">
+            <button class="close-modal-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 0.5rem 1.2rem; font-size: 0.9rem;" id="admin-logout-btn">Log Out</button>
+            <button class="close-admin-btn" id="admin-dash-close-btn" style="position: static; font-size: 2rem; border: none; background: none; color: hsl(var(--color-text-muted)); cursor: pointer;">&times;</button>
+          </div>
+        </header>
+
+        <main class="admin-dash-content">
+          <!-- Tab 1: Orders Feed Queue -->
+          <div class="dash-tab-pane active" id="tab-pane-orders">
+            <div class="pane-header">
+              <h3>Live Prep Queue</h3>
+              <p>Active orders requiring preparation and coordinates verification</p>
+            </div>
+            <div class="orders-feed-grid" id="admin-orders-feed">
+              <!-- Live Order Cards rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Tab 2: Menu & Stock Manager -->
+          <div class="dash-tab-pane" id="tab-pane-inventory">
+            <div class="pane-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+              <div>
+                <h3>Menu Inventory &amp; Stock Controls</h3>
+                <p>Toggle real-time stock parameters, adjust prices, and introduce items</p>
+              </div>
+              <button class="brew-btn" id="admin-add-item-trigger">+ Add New Item</button>
+            </div>
+            
+            <div class="inventory-table-container">
+              <table class="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Item Details</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock Toggle</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-inventory-list">
+                  <!-- Inventory rows rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab 3: Table Bookings -->
+          <div class="dash-tab-pane" id="tab-pane-reservations">
+            <div class="pane-header">
+              <h3>Table Reservations</h3>
+              <p>Logs of corner reservations and working sessions booked online</p>
+            </div>
+            <div class="reservations-table-container">
+              <table class="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Phone / Account</th>
+                    <th>Dining Option</th>
+                    <th>Details / Table</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-reservations-list">
+                  <!-- Booking rows rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Add Menu Item Dialog / Drawer Modal -->
+      <div class="modal-overlay" id="admin-add-item-modal">
+        <div class="modal-card admin-add-card" style="text-align: left; max-width: 500px;">
+          <h2 style="font-size: 1.6rem; color: white; margin-bottom: 0.5rem;">Add New Menu Item</h2>
+          <p style="font-size: 0.85rem; color: hsl(var(--color-text-muted)); margin-bottom: 1.5rem;">Fill details to append a seasonal item directly to the online store</p>
+          
+          <form id="admin-add-item-form" style="display: flex; flex-direction: column; gap: 1.2rem;">
+            <div class="input-details-group">
+              <label for="new-item-name" style="font-size: 0.85rem; color: hsl(var(--color-text-muted));">Item Name</label>
+              <input type="text" id="new-item-name" placeholder="e.g. Cinnamon Cold Brew" style="width: 100%; padding: 0.7rem 1rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: white; outline: none; font-family: 'Outfit';" required />
+            </div>
+
+            <div style="display: flex; gap: 1rem;">
+              <div class="input-details-group" style="flex: 1;">
+                <label for="new-item-category" style="font-size: 0.85rem; color: hsl(var(--color-text-muted));">Category</label>
+                <select id="new-item-category" style="width: 100%; padding: 0.7rem 1rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: #27211b; color: white; outline: none; font-family: 'Outfit'; height: 42px;" required>
+                  <option value="coffee">Coffee</option>
+                  <option value="teas">Teas</option>
+                  <option value="food">Food</option>
+                </select>
+              </div>
+              <div class="input-details-group" style="flex: 1;">
+                <label for="new-item-price" style="font-size: 0.85rem; color: hsl(var(--color-text-muted));">Price ($)</label>
+                <input type="number" id="new-item-price" placeholder="4.50" step="0.01" min="0.50" style="width: 100%; padding: 0.7rem 1rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: white; outline: none; font-family: 'Outfit';" required />
+              </div>
+            </div>
+
+            <div class="input-details-group">
+              <label for="new-item-badge" style="font-size: 0.85rem; color: hsl(var(--color-text-muted));">Badge / Label</label>
+              <input type="text" id="new-item-badge" placeholder="e.g. Seasonal Spiced" style="width: 100%; padding: 0.7rem 1rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: white; outline: none; font-family: 'Outfit';" required />
+            </div>
+
+            <div class="input-details-group">
+              <label for="new-item-desc" style="font-size: 0.85rem; color: hsl(var(--color-text-muted));">Description</label>
+              <textarea id="new-item-desc" placeholder="Details of ingredients, flavor notes..." style="width: 100%; height: 80px; padding: 0.8rem 1rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: white; outline: none; font-family: 'Outfit'; resize: none;" required></textarea>
+            </div>
+
+            <div class="input-details-group" id="new-item-drink-visuals" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem;">
+              <span style="font-size: 0.85rem; color: hsl(var(--color-text-muted)); font-weight: 500;">Drink Liquid Colors (Crema/Base Glow)</span>
+              <div style="display: flex; gap: 0.8rem;">
+                <input type="color" id="new-item-color-liquid" value="#3a2215" style="border: none; background: transparent; cursor: pointer; width: 44px; height: 38px;" />
+                <input type="color" id="new-item-color-foam" value="#fcf8f2" style="border: none; background: transparent; cursor: pointer; width: 44px; height: 38px;" />
+                <span style="font-size: 0.8rem; color: hsl(var(--color-text-muted)); align-self: center;">Click picker to customize base crema and head foam styles</span>
+              </div>
+            </div>
+
+            <div class="input-details-group" id="new-item-food-visuals" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem; display: none;">
+              <label for="new-item-emoji" style="font-size: 0.85rem; color: hsl(var(--color-text-muted));">Select Plating Icon / Emoji</label>
+              <input type="text" id="new-item-emoji" value="🍩" placeholder="🍩" style="width: 100%; padding: 0.7rem 1rem; border-radius: 50px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: white; outline: none; font-family: 'Outfit';" />
+            </div>
+
+            <div class="admin-add-actions" style="display: flex; gap: 0.8rem; margin-top: 0.5rem;">
+              <button type="submit" class="checkout-btn" style="flex: 1;">Save Item</button>
+              <button type="button" class="close-modal-btn" id="admin-add-item-cancel" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; margin-top: 0; flex: 1;">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Mobile Navigation Drawer -->
     <div class="mobile-nav-drawer" id="mobile-nav-drawer">
       <div class="mobile-nav-header">
@@ -125,9 +304,10 @@
         <a href="#menu" class="mobile-nav-link mobile-category-trigger" data-category="teas">Teas</a>
         <a href="#menu" class="mobile-nav-link mobile-category-trigger" data-category="food">Food</a>
         <a href="#hours-location" class="mobile-nav-link">Locations</a>
+        <a href="#admin-portal" class="mobile-nav-link" id="mobile-admin-trigger" style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 1rem;">Staff Portal</a>
         
         <!-- Mobile Create Account -->
-        <a href="#" id="mobile-account-trigger" class="mobile-nav-link" style="color: hsl(var(--color-primary-light)); border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 1.5rem; display: flex; align-items: center; gap: 0.6rem;">
+        <a href="#" id="mobile-account-trigger" class="mobile-nav-link" style="color: hsl(var(--color-primary-light)); padding-top: 1rem; display: flex; align-items: center; gap: 0.6rem;">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           <span id="mobile-account-text">Create Account</span>
         </a>
@@ -153,10 +333,11 @@
           <a href="#menu" class="nav-link category-trigger" data-category="teas">Teas</a>
           <a href="#menu" class="nav-link category-trigger" data-category="food">Food</a>
           <a href="#hours-location" class="nav-link">Locations</a>
+          <a href="#admin-portal" class="nav-link" id="nav-admin-trigger">Staff Portal</a>
         </nav>
         
         <div class="header-actions-group">
-          <!-- Account Button (Person Emoji / Icon removed to prevent shift off-screen) -->
+          <!-- Account Button -->
           <button id="account-trigger-btn" class="account-btn-nav">
             <span id="account-btn-text">Create Account</span>
           </button>
@@ -494,7 +675,7 @@
               <p style="font-size: 0.85rem; color: hsl(var(--color-text-muted)); line-height: 1.4; margin-bottom: 1rem;">To prevent spam orders from outside, we verify your live GPS coordinates before starting preparation.</p>
               
               <div style="display: flex; flex-direction: column; gap: 0.8rem; align-items: flex-start;">
-                <button type="button" id="verify-location-btn" style="display: flex; align-items: center; gap: 0.6rem; background: rgba(217,125,56,0.15); border: 1px solid rgba(217,125,56,0.3); color: hsl(var(--color-primary-light)); padding: 0.7rem 1.4rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-family: 'Outfit'; transition: var(--transition-smooth);">
+                <button type="button" id="verify-location-btn" style="display: flex; align-items: center; gap: 0.6rem; background: rgba(217, 125, 56, 0.15); border: 1px solid rgba(217, 125, 56, 0.3); color: hsl(var(--color-primary-light)); padding: 0.7rem 1.4rem; border-radius: 50px; font-weight: 600; cursor: pointer; font-family: 'Outfit'; transition: var(--transition-smooth);">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="loc-pin-icon"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
                   <span>Verify My Location</span>
                 </button>

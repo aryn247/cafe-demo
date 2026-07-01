@@ -1,123 +1,11 @@
 import './style.css';
+import { api } from './services/api.js';
 
-// 1. Menu Datasets
-const COFFEE = [
-  {
-    id: 'espresso',
-    category: 'coffee',
-    name: 'Classic Espresso',
-    badge: 'Rich & Intense',
-    description: 'A concentrated shot of pure arabica coffee, offering a robust aroma and caramel-toned crema.',
-    price: 3.50,
-    gradient: 'linear-gradient(to top, #1c0e07 0%, #3a2215 100%)',
-    foamColor: 'rgba(217, 125, 56, 0.4)', // Amber crema
-    special: false
-  },
-  {
-    id: 'cappuccino',
-    category: 'coffee',
-    name: 'Velvety Cappuccino',
-    badge: 'House Favorite',
-    description: 'Equal parts rich espresso, steamed milk, and a thick, cloud-like layer of velvety milk foam.',
-    price: 4.75,
-    gradient: 'linear-gradient(to top, #29180e 0%, #5c3c24 70%, #ece0d1 100%)',
-    foamColor: '#fcf8f2', // Rich white foam
-    special: true
-  },
-  {
-    id: 'caramel',
-    category: 'coffee',
-    name: 'Caramel Macchiato',
-    badge: 'Sweet & Creamy',
-    description: 'Freshly steamed milk stained with espresso, sweet vanilla syrup, and a crosshatch caramel drizzle.',
-    price: 5.50,
-    gradient: 'linear-gradient(to top, #36220f 0%, #8a5a36 60%, #ffd166 100%)',
-    foamColor: '#ffd166', // Caramel syrup foam
-    special: false
-  }
-];
-
-const TEAS = [
-  {
-    id: 'matcha',
-    category: 'teas',
-    name: 'Iced Matcha Latte',
-    badge: 'Artisanal Green',
-    description: 'Vibrant Japanese ceremonial matcha whisked with ice-cold milk, creating creamy, earthy layers.',
-    price: 5.25,
-    gradient: 'linear-gradient(to top, #2d6a4f 0%, #74c69d 60%, #e8f5e9 100%)',
-    foamColor: '#d8f3dc', // Green froth
-    special: false
-  },
-  {
-    id: 'chamomile',
-    category: 'teas',
-    name: 'Organic Chamomile',
-    badge: 'Calming Herbal',
-    description: 'Soothe your senses with organic golden chamomile blossoms offering floral notes and honey undertones.',
-    price: 4.50,
-    gradient: 'linear-gradient(to top, #6f5d30 0%, #bf993b 80%)',
-    foamColor: 'rgba(255, 235, 175, 0.2)',
-    special: false
-  },
-  {
-    id: 'darjeeling',
-    category: 'teas',
-    name: 'Royal Darjeeling',
-    badge: 'Champagne of Teas',
-    description: 'Exquisite black tea from Darjeeling Himalayan estate, characterized by bright amber tones and floral muscatel notes.',
-    price: 4.95,
-    gradient: 'linear-gradient(to top, #200b03 0%, #683011 80%)',
-    foamColor: 'rgba(217, 125, 56, 0.15)',
-    special: true
-  }
-];
-
-const FOOD = [
-  {
-    id: 'croissant',
-    category: 'food',
-    name: 'Butter Croissant',
-    badge: 'Baked Daily',
-    description: 'Flaky, golden-brown puff pastry baked fresh each morning with premium organic butter.',
-    price: 3.25,
-    emoji: '🥐',
-    special: false
-  },
-  {
-    id: 'muffin',
-    category: 'food',
-    name: 'Chocolate Muffin',
-    badge: 'Decadent Cup',
-    description: 'Double chocolate muffin filled with molten fudge chunks and topped with cocoa dusting.',
-    price: 3.75,
-    emoji: '🧁',
-    special: false
-  },
-  {
-    id: 'cheesecake',
-    category: 'food',
-    name: 'Matcha Cheesecake',
-    badge: 'House Specialty',
-    description: 'Creamy New York style cheesecake infused with Uji matcha on a graham cracker base.',
-    price: 5.50,
-    emoji: '🍰',
-    special: true
-  },
-  {
-    id: 'toast',
-    category: 'food',
-    name: 'Avocado Toast',
-    badge: 'Barista Choice',
-    description: 'Artisanal sourdough toast layered with seasoned mashed avocado, cherry tomatoes, and microgreens.',
-    price: 6.25,
-    emoji: '🥑',
-    special: false
-  }
-];
-
-// Combine all items for easy lookup
-const ALL_ITEMS = [...COFFEE, ...TEAS, ...FOOD];
+// 1. App Menu States (Loaded dynamically from database)
+let ALL_ITEMS = [];
+let COFFEE = [];
+let TEAS = [];
+let FOOD = [];
 
 // 2. Application State
 const state = {
@@ -131,7 +19,11 @@ const state = {
   geolocationVerified: false,
   diningOption: 'dinein', // 'dinein' or 'takeaway'
   orderAttempts: 0, // simulated rate-limiting
-  currentCraftingItem: null // keep track of current prepared item for cross-sell
+  currentCraftingItem: null, // keep track of current prepared item for cross-sell
+  
+  // Admin Portal State
+  isAdminLoggedIn: false,
+  adminActiveTab: 'orders'
 };
 
 // 3. DOM Cache
@@ -226,12 +118,36 @@ const dom = {
   
   // Footer Newsletter
   newsletterForm: document.getElementById('newsletter-form'),
-  newsletterFeedback: document.getElementById('newsletter-feedback')
+  newsletterFeedback: document.getElementById('newsletter-feedback'),
+
+  // --- ADMIN PORTAL CACHE ---
+  adminPortal: document.getElementById('admin-portal'),
+  navAdminTrigger: document.getElementById('nav-admin-trigger'),
+  mobileAdminTrigger: document.getElementById('mobile-admin-trigger'),
+  adminLoginCloseBtn: document.getElementById('admin-login-close-btn'),
+  adminDashCloseBtn: document.getElementById('admin-dash-close-btn'),
+  adminLogoutBtn: document.getElementById('admin-logout-btn'),
+  adminPinHidden: document.getElementById('admin-pin-hidden'),
+  adminLoginError: document.getElementById('admin-login-error'),
+  adminDashboardPanel: document.getElementById('admin-dashboard-panel'),
+  adminLoginScreen: document.getElementById('admin-login-screen'),
+
+  // Admin Dashboard views
+  adminOrdersFeed: document.getElementById('admin-orders-feed'),
+  adminInventoryList: document.getElementById('admin-inventory-list'),
+  adminReservationsList: document.getElementById('admin-reservations-list'),
+  adminAddItemTrigger: document.getElementById('admin-add-item-trigger'),
+  adminAddItemModal: document.getElementById('admin-add-item-modal'),
+  adminAddItemForm: document.getElementById('admin-add-item-form'),
+  adminAddItemCancel: document.getElementById('admin-add-item-cancel'),
+  newItemCategory: document.getElementById('new-item-category'),
+  newItemDrinkVisuals: document.getElementById('new-item-drink-visuals'),
+  newItemFoodVisuals: document.getElementById('new-item-food-visuals')
 };
 
 // 4. Initializer
-function init() {
-  renderMenu();
+async function init() {
+  await loadMenuData();
   setupEventListeners();
   updateCartUI();
   setupScrollHighlight();
@@ -241,7 +157,21 @@ function init() {
   dom.statusLight.classList.add('ready');
 }
 
-// 5. Setup Listeners
+// 5. Load data from backend
+async function loadMenuData() {
+  try {
+    const items = await api.getMenu();
+    ALL_ITEMS = items;
+    COFFEE = items.filter(i => i.category === 'coffee');
+    TEAS = items.filter(i => i.category === 'teas');
+    FOOD = items.filter(i => i.category === 'food');
+    renderMenu();
+  } catch (error) {
+    console.error('Failed to load menu details from server database:', error);
+  }
+}
+
+// 6. Setup Listeners
 function setupEventListeners() {
   // Welcome Overlay click
   const closeWelcome = () => {
@@ -266,12 +196,8 @@ function setupEventListeners() {
   // Interactive Editorial Accordion inside Welcome Screen
   dom.accordionItems.forEach(item => {
     item.addEventListener('click', () => {
-      // If already active, do nothing
       if (item.classList.contains('active')) return;
-      
-      // Close currently active card
       dom.accordionItems.forEach(card => card.classList.remove('active'));
-      // Open selected card
       item.classList.add('active');
     });
   });
@@ -342,11 +268,11 @@ function setupEventListeners() {
       btn.classList.add('active');
       state.activeCategory = btn.getAttribute('data-tab');
       renderMenu();
-      setupSwipeIndicators(); // Reset scroll listeners for swipe indicators
+      setupSwipeIndicators();
     });
   });
 
-  // Category Selector Link Triggers (Coffee / Teas / Food navigation anchors)
+  // Category Selector Link Triggers
   document.querySelectorAll('.category-trigger, .mobile-category-trigger').forEach(trigger => {
     trigger.addEventListener('click', (e) => {
       e.preventDefault();
@@ -354,7 +280,6 @@ function setupEventListeners() {
 
       const cat = trigger.getAttribute('data-category');
       
-      // Update Menu Tab Visuals
       dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => {
         if (btn.getAttribute('data-tab') === cat) {
           btn.classList.add('active');
@@ -367,10 +292,8 @@ function setupEventListeners() {
       renderMenu();
       setupSwipeIndicators();
       
-      // Close mobile drawer if open
       toggleMobileMenu(false);
       
-      // Smooth scroll directly to the Menu section
       const menuSec = document.getElementById('menu');
       if (menuSec) {
         const headerOffset = 90;
@@ -381,39 +304,40 @@ function setupEventListeners() {
     });
   });
 
-  // Navigation Click Handler (Smooth Scroll - Desktop)
+  // Navigation Click Handler (Desktop)
   dom.navLinks.forEach(link => {
-    if (link.classList.contains('category-trigger') || link.id === 'nav-welcome-trigger') return;
-
-    e.preventDefault();
-    const targetId = link.getAttribute('href');
-    const targetElement = document.querySelector(targetId);
-    
-    dom.navLinks.forEach(l => l.classList.remove('active'));
-    link.classList.add('active');
-
-    if (targetElement) {
-      const headerOffset = 90;
-      const elementPosition = targetElement.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
-  });
-
-  // Navigation Click Handler (Smooth Scroll - Mobile Drawer)
-  dom.mobileNavLinks.forEach(link => {
-    if (link.classList.contains('mobile-category-trigger') || link.id === 'mobile-welcome-trigger') return;
+    if (link.classList.contains('category-trigger') || link.id === 'nav-welcome-trigger' || link.id === 'nav-admin-trigger') return;
 
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const targetId = link.getAttribute('href');
       const targetElement = document.querySelector(targetId);
       
-      // Close mobile drawer
+      dom.navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+
+      if (targetElement) {
+        const headerOffset = 90;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+  // Navigation Click Handler (Mobile Drawer)
+  dom.mobileNavLinks.forEach(link => {
+    if (link.classList.contains('mobile-category-trigger') || link.id === 'mobile-welcome-trigger' || link.id === 'mobile-admin-trigger') return;
+
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('href');
+      const targetElement = document.querySelector(targetId);
+      
       toggleMobileMenu(false);
 
       if (targetElement) {
@@ -421,7 +345,6 @@ function setupEventListeners() {
         const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-        // Slight timeout to allow mobile drawer animation to clear
         setTimeout(() => {
           window.scrollTo({
             top: offsetPosition,
@@ -432,13 +355,116 @@ function setupEventListeners() {
     });
   });
 
-  // Newsletter Submit Listener
+  // Newsletter Submit
   if (dom.newsletterForm) {
     dom.newsletterForm.addEventListener('submit', handleNewsletterSubmit);
   }
+
+  // --- ADMIN PORTAL EVENT LISTENERS ---
+  const openAdminPortal = (e) => {
+    e.preventDefault();
+    toggleMobileMenu(false);
+    dom.adminPortal.classList.add('open');
+    if (!state.isAdminLoggedIn) {
+      resetAdminPin();
+    } else {
+      openAdminDashboard();
+    }
+  };
+  dom.navAdminTrigger.addEventListener('click', openAdminPortal);
+  dom.mobileAdminTrigger.addEventListener('click', openAdminPortal);
+
+  const closeAdminPortal = () => {
+    dom.adminPortal.classList.remove('open');
+  };
+  dom.adminLoginCloseBtn.addEventListener('click', closeAdminPortal);
+  dom.adminDashCloseBtn.addEventListener('click', closeAdminPortal);
+
+  dom.adminLogoutBtn.addEventListener('click', () => {
+    state.isAdminLoggedIn = false;
+    resetAdminPin();
+  });
+
+  // Pin Typing & Hidden Input Handlers
+  dom.adminPinHidden.addEventListener('input', () => {
+    let code = dom.adminPinHidden.value;
+    updatePinDots(code);
+    
+    if (code.length === 4) {
+      validateAdminPin(code);
+    }
+  });
+
+  // Virtual Pin pad click listeners
+  document.querySelectorAll('.pin-btn:not(.clear):not(.backspace)').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (dom.adminPinHidden.value.length < 4) {
+        dom.adminPinHidden.value += btn.getAttribute('data-val');
+        dom.adminPinHidden.dispatchEvent(new Event('input'));
+      }
+    });
+  });
+
+  document.getElementById('pin-clear').addEventListener('click', () => {
+    dom.adminPinHidden.value = '';
+    dom.adminPinHidden.dispatchEvent(new Event('input'));
+  });
+
+  document.getElementById('pin-backspace').addEventListener('click', () => {
+    if (dom.adminPinHidden.value.length > 0) {
+      dom.adminPinHidden.value = dom.adminPinHidden.value.slice(0, -1);
+      dom.adminPinHidden.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // Focus hidden input on login card click
+  dom.adminLoginScreen.addEventListener('click', () => {
+    dom.adminPinHidden.focus();
+  });
+
+  // Admin Dashboard Tabs
+  document.querySelectorAll('.dash-nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.dash-nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      const targetTab = btn.getAttribute('data-tab');
+      state.adminActiveTab = targetTab;
+      
+      document.querySelectorAll('.dash-tab-pane').forEach(p => p.classList.remove('active'));
+      document.getElementById(`tab-pane-${targetTab}`).classList.add('active');
+      
+      refreshAdminData();
+    });
+  });
+
+  // Add Menu Item form category change
+  dom.newItemCategory.addEventListener('change', () => {
+    const val = dom.newItemCategory.value;
+    if (val === 'food') {
+      dom.newItemDrinkVisuals.style.display = 'none';
+      dom.newItemFoodVisuals.style.display = 'block';
+    } else {
+      dom.newItemDrinkVisuals.style.display = 'flex';
+      dom.newItemFoodVisuals.style.display = 'none';
+    }
+  });
+
+  // Trigger Add Modal
+  dom.adminAddItemTrigger.addEventListener('click', () => {
+    dom.adminAddItemForm.reset();
+    dom.newItemCategory.dispatchEvent(new Event('change'));
+    dom.adminAddItemModal.classList.add('open');
+  });
+
+  dom.adminAddItemCancel.addEventListener('click', () => {
+    dom.adminAddItemModal.classList.remove('open');
+  });
+
+  dom.adminAddItemForm.addEventListener('submit', handleAdminAddItemSubmit);
 }
 
-// 6. Toggle Cart Drawer
+// 7. Toggle Cart Drawer
 function toggleCart(isOpen) {
   if (isOpen) {
     dom.cartDrawer.classList.add('open');
@@ -449,7 +475,7 @@ function toggleCart(isOpen) {
   }
 }
 
-// 7. Toggle Mobile Navigation Drawer
+// 8. Toggle Mobile Navigation Drawer
 function toggleMobileMenu(isOpen) {
   if (isOpen) {
     dom.mobileNavDrawer.classList.add('open');
@@ -460,7 +486,7 @@ function toggleMobileMenu(isOpen) {
   }
 }
 
-// 8. Render Menu Cards Dynamically
+// 9. Render Menu Cards Dynamically
 function renderMenu() {
   let currentItems = [];
   if (state.activeCategory === 'coffee') {
@@ -483,10 +509,15 @@ function renderMenu() {
       `
       : `<div class="static-food-icon">${item.emoji}</div>`;
 
+    // Check if the item is in stock
+    const isOutOfStock = item.inStock === false;
+
     return `
-      <div class="glass-card menu-card" id="card-${item.id}">
+      <div class="glass-card menu-card ${isOutOfStock ? 'out-of-stock-card' : ''}" id="card-${item.id}">
         <div class="drink-header">
-          <span class="drink-badge ${item.special ? 'special' : ''}">${item.badge}</span>
+          <span class="drink-badge ${item.special ? 'special' : ''} ${isOutOfStock ? 'sold-out' : ''}">
+            ${isOutOfStock ? 'SOLD OUT' : item.badge}
+          </span>
         </div>
         
         <div class="drink-visual">
@@ -500,8 +531,8 @@ function renderMenu() {
 
         <div class="drink-footer">
           <span class="drink-price">$${item.price.toFixed(2)}</span>
-          <button class="brew-btn" id="btn-craft-${item.id}" data-id="${item.id}">
-            ${!isFood ? 'Brew This' : 'Plate This'}
+          <button class="brew-btn" id="btn-craft-${item.id}" data-id="${item.id}" ${isOutOfStock ? 'disabled' : ''}>
+            ${isOutOfStock ? 'Sold Out' : (!isFood ? 'Brew This' : 'Plate This')}
           </button>
         </div>
       </div>
@@ -509,7 +540,7 @@ function renderMenu() {
   }).join('');
 
   // Add click events to buttons
-  dom.menuGrid.querySelectorAll('.brew-btn').forEach(button => {
+  dom.menuGrid.querySelectorAll('.brew-btn:not(:disabled)').forEach(button => {
     button.addEventListener('click', () => {
       const itemId = button.getAttribute('data-id');
       triggerCraftSequence(itemId);
@@ -517,7 +548,7 @@ function renderMenu() {
   });
 }
 
-// 9. Dynamic Steam Particles
+// 10. Dynamic Steam Particles
 let steamInterval = null;
 function startSteam() {
   if (steamInterval) clearInterval(steamInterval);
@@ -530,7 +561,6 @@ function startSteam() {
     
     dom.steamContainer.appendChild(particle);
     
-    // Remove particle when animation ends
     setTimeout(() => {
       particle.remove();
     }, 2200);
@@ -544,7 +574,7 @@ function stopSteam() {
   }
 }
 
-// 10. Prep Station Animations
+// 11. Prep Station Animations
 function triggerCraftSequence(itemId) {
   if (state.isBrewing) return;
   state.isBrewing = true;
@@ -553,18 +583,15 @@ function triggerCraftSequence(itemId) {
   state.currentCraftingItem = item;
   const isFood = item.category === 'food';
   
-  // Disable all action buttons
   document.querySelectorAll('.brew-btn').forEach(btn => btn.disabled = true);
   dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = true);
   
   dom.statusLight.className = 'status-light brewing';
   dom.cupLanding.innerHTML = '';
   
-  // Focus view on prep station
   document.getElementById('brewing').scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   if (!isFood) {
-    // --- DRINK BREWING SEQUENCE ---
     dom.machineStatus.innerText = `Preparing cup for ${item.name}...`;
 
     const cup = document.createElement('div');
@@ -578,19 +605,16 @@ function triggerCraftSequence(itemId) {
     cup.appendChild(liquid);
     dom.cupLanding.appendChild(cup);
 
-    // 1. Wait for Cup Drop and Spin (900ms)
     setTimeout(() => {
       dom.machineStatus.innerText = `Brewing ${item.name}...`;
       dom.gaugeNeedle.style.transform = 'rotate(85deg)';
       dom.coffeeStream.classList.add('stream-flowing');
       startSteam();
 
-      // Start filling
       setTimeout(() => {
         liquid.style.height = '82%';
       }, 100);
 
-      // 2. Complete Brewing (after 2.5s)
       setTimeout(() => {
         liquid.classList.add('filled');
         dom.coffeeStream.classList.remove('stream-flowing');
@@ -599,7 +623,6 @@ function triggerCraftSequence(itemId) {
         dom.statusLight.className = 'status-light ready';
         dom.machineStatus.innerText = `${item.name} completed! Transferring to cart...`;
 
-        // 3. Parabolic Throw to Cart (after 500ms stabilization)
         setTimeout(() => {
           animateFlyToCart(cup, item);
         }, 500);
@@ -609,10 +632,7 @@ function triggerCraftSequence(itemId) {
     }, 900);
 
   } else {
-    // --- FOOD PLATING SEQUENCE ---
     dom.machineStatus.innerText = `Preparing serving tray for ${item.name}...`;
-    
-    // Hide portafilter nozzle visually to accommodate plates
     dom.portafilter.classList.add('hide-nozzle');
 
     const plate = document.createElement('div');
@@ -625,30 +645,25 @@ function triggerCraftSequence(itemId) {
     plate.appendChild(food);
     dom.cupLanding.appendChild(plate);
 
-    // 1. Wait for Plate Drop and Spin (900ms)
     setTimeout(() => {
       dom.machineStatus.innerText = `Warming & plating ${item.name}...`;
-      dom.gaugeNeedle.style.transform = 'rotate(40deg)'; // Minor warmth pressure
+      dom.gaugeNeedle.style.transform = 'rotate(40deg)';
       
-      // Warm croissant/toast with steam puff
       if (item.id === 'croissant' || item.id === 'toast') {
         startSteam();
         setTimeout(stopSteam, 1200);
       }
 
-      // Plate reveal (lift dome and pop food)
       setTimeout(() => {
         plate.classList.add('plated');
         food.classList.add('revealed');
       }, 300);
 
-      // 2. Complete Plating (after 2.0s total)
       setTimeout(() => {
         dom.gaugeNeedle.style.transform = 'rotate(-90deg)';
         dom.statusLight.className = 'status-light ready';
         dom.machineStatus.innerText = `${item.name} plated! Serving...`;
 
-        // 3. Parabolic Throw to Cart (after 500ms)
         setTimeout(() => {
           animateFlyToCart(plate, item);
         }, 500);
@@ -659,7 +674,7 @@ function triggerCraftSequence(itemId) {
   }
 }
 
-// 11. Helper: Parabolic flight calculation
+// 12. Helper: Parabolic flight calculation
 function animateFlyToCart(element, item) {
   const rect = element.getBoundingClientRect();
   const cartBtnRect = dom.cartToggleBtn.getBoundingClientRect();
@@ -674,19 +689,15 @@ function animateFlyToCart(element, item) {
     ? 'coffee-cup cup-flying' 
     : 'serving-plate plate-flying';
   
-  // Finish Animation
   setTimeout(() => {
     element.remove();
     dom.cupLanding.innerHTML = '';
     
-    // Add to cart state
     addToCart(item);
     
-    // Bounce cart button
     dom.cartToggleBtn.classList.add('pop');
     setTimeout(() => dom.cartToggleBtn.classList.remove('pop'), 300);
     
-    // Set dynamic text on cross-sell modal depending on item category
     if (item.category === 'coffee' || item.category === 'teas') {
       dom.crossSellTitle.innerText = 'Pair it with a Bite?';
       dom.crossSellDesc.innerText = 'Your drink is prepared! Would you like to order anything else?';
@@ -697,20 +708,19 @@ function animateFlyToCart(element, item) {
       dom.crossSellYesBtn.innerText = 'Yes, show drinks';
     }
 
-    // Open Cross-Sell modal instead of Cart drawer directly
     dom.crossSellModal.classList.add('open');
 
-    // Reset machine locks and portafilter UI
     state.isBrewing = false;
     dom.portafilter.classList.remove('hide-nozzle');
     
-    document.querySelectorAll('.brew-btn').forEach(btn => btn.disabled = false);
+    // Refresh buttons taking live stock status into account
+    renderMenu();
     dom.menuTabs.querySelectorAll('.tab-btn').forEach(btn => btn.disabled = false);
     dom.machineStatus.innerText = 'Select an item from the menu to start crafting';
   }, 800);
 }
 
-// 12. Cart Operations
+// 13. Cart Operations
 function addToCart(item) {
   const existingItem = state.cart.find(cartItem => cartItem.id === item.id);
   
@@ -728,7 +738,6 @@ function addToCart(item) {
   updateCartUI();
 }
 
-// Remove from cart
 function removeFromCart(itemId) {
   const itemIndex = state.cart.findIndex(item => item.id === itemId);
   if (itemIndex > -1) {
@@ -742,7 +751,7 @@ function removeFromCart(itemId) {
   updateCartUI();
 }
 
-// 13. Update Cart Drawer View
+// 14. Update Cart Drawer View
 function updateCartUI() {
   const totalItems = state.cart.reduce((sum, item) => sum + item.qty, 0);
   dom.cartBadge.innerText = totalItems;
@@ -789,17 +798,15 @@ function updateCartUI() {
 
     dom.checkoutBtn.disabled = false;
 
-    // Subtotal math
     const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     dom.cartSubtotal.innerText = `$${subtotal.toFixed(2)}`;
   }
 }
 
-// 14. Cross-sell Handlers
+// 15. Cross-sell Handlers
 function handleCrossSellYes() {
   dom.crossSellModal.classList.remove('open');
   
-  // Toggle tab button and show correct category
   const currentCategory = state.currentCraftingItem ? state.currentCraftingItem.category : 'coffee';
   const targetCategory = (currentCategory === 'coffee' || currentCategory === 'teas')
     ? 'food'
@@ -816,7 +823,6 @@ function handleCrossSellYes() {
   renderMenu();
   setupSwipeIndicators();
   
-  // Smooth scroll back to menu
   const menuSec = document.getElementById('menu');
   if (menuSec) {
     const headerOffset = 90;
@@ -826,16 +832,14 @@ function handleCrossSellYes() {
   }
 }
 
-// Close modal and open cart drawer
 function handleCrossSellNo() {
   dom.crossSellModal.classList.remove('open');
   toggleCart(true);
 }
 
-// 15. Authentication & Account Management Handlers
+// 16. Authentication & Account Management Handlers
 function handleAccountClick() {
   if (state.isLoggedIn) {
-    // Simulated logout toggle
     if (confirm('You are already logged in. Would you like to sign out?')) {
       state.isLoggedIn = false;
       state.user = null;
@@ -843,7 +847,6 @@ function handleAccountClick() {
       if (dom.mobileAccountText) dom.mobileAccountText.innerText = 'Create Account';
     }
   } else {
-    // Show phone authentication screen
     dom.authPhoneStep.style.display = 'block';
     dom.authOtpStep.style.display = 'none';
     dom.authPhoneInput.value = '';
@@ -852,16 +855,14 @@ function handleAccountClick() {
 }
 
 function handleCheckoutTrigger() {
-  toggleCart(false); // Close cart drawer
+  toggleCart(false);
   
   if (!state.isLoggedIn) {
-    // Show auth modal and reset state to phone input step
     dom.authPhoneStep.style.display = 'block';
     dom.authOtpStep.style.display = 'none';
     dom.authPhoneInput.value = '';
     dom.authModal.classList.add('open');
   } else {
-    // Open verification check details modal
     openCheckoutDetails();
   }
 }
@@ -873,11 +874,9 @@ function handleSendOtp() {
     return;
   }
   
-  // Transition to OTP verification step
   dom.authPhoneStep.style.display = 'none';
   dom.authOtpStep.style.display = 'block';
   
-  // Clear OTP digits and focus on first box
   dom.otpDigits.forEach(input => input.value = '');
   if (dom.otpDigits[0]) dom.otpDigits[0].focus();
 }
@@ -887,15 +886,12 @@ function handleVerifyOtp() {
   dom.otpDigits.forEach(input => code += input.value);
   
   if (code === '1234') {
-    // Mock login successfully
     state.isLoggedIn = true;
     state.user = { phone: dom.authPhoneInput.value };
     
-    // Update Header trigger labels
     dom.accountBtnText.innerText = 'Hi, Aryan';
     if (dom.mobileAccountText) dom.mobileAccountText.innerText = 'Hi, Aryan';
 
-    // Close auth modal and redirect to checkout details
     dom.authModal.classList.remove('open');
     setTimeout(openCheckoutDetails, 300);
   } else {
@@ -912,10 +908,9 @@ function handleAuthBack() {
 
 function setupOtpAutofocus() {
   dom.otpDigits.forEach(input => {
-    input.addEventListener('input', (e) => {
+    input.addEventListener('input', () => {
       const idx = parseInt(input.getAttribute('data-idx'));
       if (input.value.length === 1 && idx < 3) {
-        // Shift focus to next box
         const nextBox = document.querySelector(`.otp-digit[data-idx="${idx + 1}"]`);
         if (nextBox) nextBox.focus();
       }
@@ -924,7 +919,6 @@ function setupOtpAutofocus() {
     input.addEventListener('keydown', (e) => {
       const idx = parseInt(input.getAttribute('data-idx'));
       if (e.key === 'Backspace' && input.value.length === 0 && idx > 0) {
-        // Shift focus to previous box
         const prevBox = document.querySelector(`.otp-digit[data-idx="${idx - 1}"]`);
         if (prevBox) {
           prevBox.focus();
@@ -935,17 +929,15 @@ function setupOtpAutofocus() {
   });
 }
 
-// 16. Checkout Details Modals (Dining & Geolocation checks)
+// 17. Checkout Details Modals (Dining & Geolocation checks)
 function openCheckoutDetails() {
   state.geolocationVerified = false;
   dom.turnstileCheckbox.checked = false;
   dom.confirmOrderBtn.disabled = true;
   
-  // Reset location UI elements
   dom.locationStatus.className = 'loc-badge status-pending';
   dom.locationStatus.innerText = 'Location not verified';
   
-  // Set default dining option
   toggleDiningOption('dinein');
   dom.tableNumberInput.value = '';
 
@@ -975,8 +967,7 @@ function handleLocationVerify() {
   
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        // Geolocation coordinates captured successfully!
+      () => {
         state.geolocationVerified = true;
         
         setTimeout(() => {
@@ -986,7 +977,6 @@ function handleLocationVerify() {
         }, 1200);
       },
       (error) => {
-        // Fallback / Denied states
         state.geolocationVerified = false;
         dom.locationStatus.className = 'loc-badge status-error';
         
@@ -1016,7 +1006,6 @@ function checkCheckoutFormValidity() {
     isTableValid = tableVal !== '' && parseInt(tableVal) > 0;
   }
 
-  // Enable final submission button only if all security/dining requirements are verified
   if (isTurnstileChecked && isLocationVerified && isTableValid) {
     dom.confirmOrderBtn.disabled = false;
   } else {
@@ -1024,56 +1013,70 @@ function checkCheckoutFormValidity() {
   }
 }
 
-function handleFinalOrderSubmission(e) {
+// Place order to backend Express DB
+async function handleFinalOrderSubmission(e) {
   e.preventDefault();
   
-  // Simulated Rate Limiting: Prevent rapid spam orders
   state.orderAttempts += 1;
   if (state.orderAttempts > 3) {
     alert('Security Alert: Multiple order submissions detected. Your IP rate limit is locked. Please try again in 5 minutes.');
     return;
   }
 
-  // Success flow
-  dom.checkoutDetailsModal.classList.remove('open');
-  
-  // Build final receipt html
   const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
   
-  let receiptHtml = `
-    <div style="margin-bottom: 0.8rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 0.6rem; font-size: 0.85rem; color: hsl(var(--color-primary-light));">
-      <span>Mode: ${state.diningOption === 'dinein' ? `Dine-In (Table ${dom.tableNumberInput.value})` : 'Takeaway (Pick-Up)'}</span>
-    </div>
-  `;
-  
-  receiptHtml += state.cart.map(item => `
-    <div class="receipt-item">
-      <span>${item.qty}x ${item.name}</span>
-      <span>$${(item.price * item.qty).toFixed(2)}</span>
-    </div>
-  `).join('');
-  
-  receiptHtml += `
-    <div class="receipt-item">
-      <span>Total Paid</span>
-      <span>$${subtotal.toFixed(2)}</span>
-    </div>
-  `;
+  const orderPayload = {
+    items: state.cart,
+    subtotal: subtotal,
+    diningOption: state.diningOption,
+    tableNumber: state.diningOption === 'dinein' ? parseInt(dom.tableNumberInput.value) : null,
+    phone: state.user ? state.user.phone : '9999999999',
+    location: dom.locationStatus.innerText
+  };
 
-  dom.orderReceipt.innerHTML = receiptHtml;
-  dom.checkoutModal.classList.add('open');
+  try {
+    // Send order to server
+    await api.placeOrder(orderPayload);
+
+    dom.checkoutDetailsModal.classList.remove('open');
+    
+    let receiptHtml = `
+      <div style="margin-bottom: 0.8rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 0.6rem; font-size: 0.85rem; color: hsl(var(--color-primary-light));">
+        <span>Mode: ${state.diningOption === 'dinein' ? `Dine-In (Table ${dom.tableNumberInput.value})` : 'Takeaway (Pick-Up)'}</span>
+      </div>
+    `;
+    
+    receiptHtml += state.cart.map(item => `
+      <div class="receipt-item">
+        <span>${item.qty}x ${item.name}</span>
+        <span>$${(item.price * item.qty).toFixed(2)}</span>
+      </div>
+    `).join('');
+    
+    receiptHtml += `
+      <div class="receipt-item">
+        <span>Total Paid</span>
+        <span>$${subtotal.toFixed(2)}</span>
+      </div>
+    `;
+
+    dom.orderReceipt.innerHTML = receiptHtml;
+    dom.checkoutModal.classList.add('open');
+    
+  } catch (error) {
+    console.error('Failed to post order to server:', error);
+    alert('Failed to transmit order to kitchen database. Please verify connection and try again.');
+  }
 }
 
 function closeModal() {
   dom.checkoutModal.classList.remove('open');
   state.cart = [];
   updateCartUI();
-  
-  // Reset order attempts rate limits on success
   state.orderAttempts = 0;
 }
 
-// 17. Newsletter Subscription Handling
+// Newsletter Submit
 function handleNewsletterSubmit(e) {
   e.preventDefault();
   const emailInput = document.getElementById('newsletter-email');
@@ -1083,7 +1086,6 @@ function handleNewsletterSubmit(e) {
     dom.newsletterFeedback.className = 'newsletter-feedback success';
     dom.newsletterForm.reset();
     
-    // Clear feedback message after 4 seconds
     setTimeout(() => {
       dom.newsletterFeedback.innerText = '';
       dom.newsletterFeedback.className = 'newsletter-feedback';
@@ -1091,7 +1093,7 @@ function handleNewsletterSubmit(e) {
   }
 }
 
-// 18. Scroll Observer for Active Link Highlights
+// Scroll Highlights
 function setupScrollHighlight() {
   const sections = ['online-store', 'hours-location', 'reviews'];
   const observerOptions = {
@@ -1104,12 +1106,9 @@ function setupScrollHighlight() {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         let id = entry.target.getAttribute('id');
-        
-        // Map store wrapper to individual categories for highlight targets
         let highlightId = id;
         if (id === 'online-store') highlightId = 'menu';
 
-        // Highlight Desktop Link
         dom.navLinks.forEach(link => {
           const href = link.getAttribute('href');
           if (href === `#${highlightId}` || (highlightId === 'menu' && link.classList.contains('category-trigger'))) {
@@ -1119,7 +1118,6 @@ function setupScrollHighlight() {
           }
         });
 
-        // Highlight Mobile Link
         dom.mobileNavLinks.forEach(link => {
           const href = link.getAttribute('href');
           if (href === `#${highlightId}` || (highlightId === 'menu' && link.classList.contains('mobile-category-trigger'))) {
@@ -1138,51 +1136,345 @@ function setupScrollHighlight() {
   });
 }
 
-// 19. Scroll-based fade out logic for swipe indicators
+// Swipe indicator helper
 function setupSwipeIndicators() {
-  // Menu Grid Horizontal Swipe Listener
   if (dom.menuGrid && dom.menuSwipeIndicator) {
     dom.menuSwipeIndicator.classList.remove('hidden');
-    
     const dismissMenuSwipe = () => {
       if (dom.menuGrid.scrollLeft > 25) {
         dom.menuSwipeIndicator.classList.add('hidden');
         dom.menuGrid.removeEventListener('scroll', dismissMenuSwipe);
       }
     };
-    
     dom.menuGrid.scrollLeft = 0;
     dom.menuGrid.addEventListener('scroll', dismissMenuSwipe);
   }
 
-  // Reviews Grid Horizontal Swipe Listener
   if (dom.reviewsGrid && dom.reviewsSwipeIndicator) {
     dom.reviewsSwipeIndicator.classList.remove('hidden');
-    
     const dismissReviewsSwipe = () => {
       if (dom.reviewsGrid.scrollLeft > 25) {
         dom.reviewsSwipeIndicator.classList.add('hidden');
         dom.reviewsGrid.removeEventListener('scroll', dismissReviewsSwipe);
       }
     };
-    
     dom.reviewsGrid.scrollLeft = 0;
     dom.reviewsGrid.addEventListener('scroll', dismissReviewsSwipe);
   }
 
-  // Info Grid Horizontal Swipe Listener
   if (dom.infoGrid && dom.infoSwipeIndicator) {
     dom.infoSwipeIndicator.classList.remove('hidden');
-    
     const dismissInfoSwipe = () => {
       if (dom.infoGrid.scrollLeft > 25) {
         dom.infoSwipeIndicator.classList.add('hidden');
         dom.infoGrid.removeEventListener('scroll', dismissInfoSwipe);
       }
     };
-    
     dom.infoGrid.scrollLeft = 0;
     dom.infoGrid.addEventListener('scroll', dismissInfoSwipe);
+  }
+}
+
+// --- ADMIN & STAFF PORTAL METHODS ---
+
+function resetAdminPin() {
+  dom.adminPinHidden.value = '';
+  updatePinDots('');
+  dom.adminLoginError.innerText = '';
+  dom.adminLoginScreen.style.display = 'block';
+  dom.adminDashboardPanel.classList.add('hidden-dashboard');
+  dom.adminPinHidden.focus();
+}
+
+function updatePinDots(code) {
+  const dots = dom.adminLoginScreen.querySelectorAll('.pin-dot');
+  dots.forEach((dot, idx) => {
+    if (idx < code.length) {
+      dot.classList.add('filled');
+    } else {
+      dot.classList.remove('filled');
+    }
+  });
+}
+
+function validateAdminPin(code) {
+  // Support either '1234' or '4321' as requested
+  if (code === '1234' || code === '4321') {
+    state.isAdminLoggedIn = true;
+    openAdminDashboard();
+  } else {
+    dom.adminLoginError.innerText = 'Incorrect PIN. Try "1234" or "4321"';
+    dom.adminPinHidden.value = '';
+    updatePinDots('');
+    dom.adminPinHidden.focus();
+  }
+}
+
+function openAdminDashboard() {
+  dom.adminLoginScreen.style.display = 'none';
+  dom.adminDashboardPanel.classList.remove('hidden-dashboard');
+  refreshAdminData();
+}
+
+async function refreshAdminData() {
+  if (!state.isAdminLoggedIn) return;
+
+  try {
+    if (state.adminActiveTab === 'orders') {
+      // 1. Load active Orders Feed
+      const orders = await api.getOrders();
+      // Render orders descending (newest first)
+      const pendingOrders = orders.filter(o => o.status === 'pending').reverse();
+      
+      if (pendingOrders.length === 0) {
+        dom.adminOrdersFeed.innerHTML = `
+          <div class="empty-cart-message" style="grid-column: 1 / -1; height: 200px;">
+            <p>Queue is empty</p>
+            <p class="sub-text">Active orders from the shop will stream here</p>
+          </div>
+        `;
+      } else {
+        dom.adminOrdersFeed.innerHTML = pendingOrders.map(order => {
+          const itemsHtml = order.items.map(item => `
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.05); padding: 0.3rem 0;">
+              <span>${item.qty}x ${item.name}</span>
+              <span style="color: hsl(var(--color-primary-light));">$${(item.price * item.qty).toFixed(2)}</span>
+            </div>
+          `).join('');
+
+          const isDineIn = order.diningOption === 'dinein';
+
+          return `
+            <div class="glass-card order-feed-card">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
+                <span style="font-weight: 700; color: white;">Order #${order.id.slice(-4)}</span>
+                <span class="drink-badge ${isDineIn ? 'special' : ''}">
+                  ${isDineIn ? `Table ${order.tableNumber}` : 'Takeaway'}
+                </span>
+              </div>
+              
+              <div style="margin-bottom: 1rem;">
+                ${itemsHtml}
+              </div>
+
+              <div style="font-size: 0.82rem; color: hsl(var(--color-text-muted)); margin-bottom: 1rem;">
+                <p>Phone: ${order.phone}</p>
+                <p style="margin-top: 0.2rem; display: flex; align-items: center; gap: 0.3rem; color: #52b788;">
+                  <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #52b788;"></span>
+                  ${order.location}
+                </p>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 0.8rem; margin-top: auto;">
+                <span style="font-size: 1.1rem; font-weight: 700; color: white;">$${order.subtotal.toFixed(2)}</span>
+                <button class="brew-btn complete-order-btn" data-id="${order.id}">Complete</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        // Bind Complete handlers
+        dom.adminOrdersFeed.querySelectorAll('.complete-order-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const ordId = btn.getAttribute('data-id');
+            btn.disabled = true;
+            btn.innerText = 'Closing...';
+            try {
+              await api.updateOrderStatus(ordId, 'completed');
+              refreshAdminData();
+            } catch (err) {
+              console.error(err);
+              btn.disabled = false;
+              btn.innerText = 'Complete';
+            }
+          });
+        });
+      }
+
+    } else if (state.adminActiveTab === 'inventory') {
+      // 2. Load stock inventory table
+      const menu = await api.getMenu();
+      dom.adminInventoryList.innerHTML = menu.map(item => {
+        const isOutOfStock = item.inStock === false;
+        
+        return `
+          <tr class="${isOutOfStock ? 'row-out-of-stock' : ''}">
+            <td>
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-weight: 600; color: white;">${item.name}</span>
+                <span style="font-size: 0.78rem; color: hsl(var(--color-text-muted));">${item.badge}</span>
+              </div>
+            </td>
+            <td style="text-transform: capitalize; color: hsl(var(--color-text-muted));">${item.category}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.2rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 50px; padding: 0.15rem 0.6rem; width: 90px;">
+                <span>$</span>
+                <input type="number" class="inventory-price-input" data-id="${item.id}" value="${item.price.toFixed(2)}" step="0.05" min="0.10" style="background: transparent; border: none; color: white; width: 100%; font-family: 'Outfit'; outline: none; font-size: 0.9rem;" />
+              </div>
+            </td>
+            <td>
+              <button class="stock-toggle-btn ${isOutOfStock ? 'out-of-stock' : 'in-stock'}" data-id="${item.id}">
+                ${isOutOfStock ? 'Sold Out' : 'In Stock'}
+              </button>
+            </td>
+            <td>
+              <button class="delete-menu-item-btn" data-id="${item.id}" style="background: none; border: none; color: #ef476f; cursor: pointer; padding: 0.4rem;" title="Delete Item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Bind Price Input change listeners
+      dom.adminInventoryList.querySelectorAll('.inventory-price-input').forEach(input => {
+        input.addEventListener('change', async () => {
+          const itemId = input.getAttribute('data-id');
+          const newPrice = parseFloat(input.value);
+          if (isNaN(newPrice) || newPrice <= 0) return;
+
+          try {
+            await api.updateMenuItem(itemId, { price: newPrice });
+            await loadMenuData(); // refresh customer side state
+          } catch (err) {
+            console.error('Failed to update price:', err);
+          }
+        });
+      });
+
+      // Bind Stock Toggles
+      dom.adminInventoryList.querySelectorAll('.stock-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const itemId = btn.getAttribute('data-id');
+          const item = ALL_ITEMS.find(i => i.id === itemId);
+          if (!item) return;
+
+          const currentStockStatus = item.inStock !== false; // true if unset/true, false if false
+          btn.disabled = true;
+          
+          try {
+            await api.updateMenuItem(itemId, { inStock: !currentStockStatus });
+            await loadMenuData(); // refresh customer side state
+            refreshAdminData();
+          } catch (err) {
+            console.error(err);
+            btn.disabled = false;
+          }
+        });
+      });
+
+      // Bind Delete Buttons
+      dom.adminInventoryList.querySelectorAll('.delete-menu-item-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const itemId = btn.getAttribute('data-id');
+          if (confirm('Are you sure you want to delete this menu item?')) {
+            try {
+              await api.deleteMenuItem(itemId);
+              await loadMenuData();
+              refreshAdminData();
+            } catch (err) {
+              console.error(err);
+            }
+          }
+        });
+      });
+
+    } else if (state.adminActiveTab === 'reservations') {
+      // 3. Load Bookings / Reservations
+      const orders = await api.getOrders();
+      // Render orders descending (newest first)
+      const reservations = orders.reverse();
+
+      if (reservations.length === 0) {
+        dom.adminReservationsList.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; color: hsl(var(--color-text-muted)); padding: 2rem;">
+              No customer bookings logged yet
+            </td>
+          </tr>
+        `;
+      } else {
+        dom.adminReservationsList.innerHTML = reservations.map(res => {
+          const isDineIn = res.diningOption === 'dinein';
+          const itemsString = res.items.map(i => `${i.qty}x ${i.name}`).join(', ');
+          
+          const t = new Date(res.timestamp);
+          const formattedTime = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' ' + t.toLocaleDateString();
+
+          return `
+            <tr>
+              <td>
+                <span style="font-size: 0.95rem; color: white;">${formattedTime}</span>
+              </td>
+              <td>
+                <span style="font-family: monospace; font-size: 0.9rem; color: hsl(var(--color-primary-light));">${res.phone}</span>
+              </td>
+              <td>
+                <span class="drink-badge ${isDineIn ? 'special' : ''}">
+                  ${isDineIn ? 'Dine-In' : 'Takeaway'}
+                </span>
+              </td>
+              <td>
+                <div style="display: flex; flex-direction: column; font-size: 0.88rem;">
+                  <span style="color: white; font-weight: 500;">
+                    ${isDineIn ? `Reserved Table ${res.tableNumber}` : 'Pick-Up Order'}
+                  </span>
+                  <span style="color: hsl(var(--color-text-muted)); font-size: 0.8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;">
+                    Items: ${itemsString}
+                  </span>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+  } catch (error) {
+    console.error('Failed to refresh admin dashboard views:', error);
+  }
+}
+
+async function handleAdminAddItemSubmit(e) {
+  e.preventDefault();
+  
+  const name = document.getElementById('new-item-name').value;
+  const category = dom.newItemCategory.value;
+  const price = parseFloat(document.getElementById('new-item-price').value);
+  const badge = document.getElementById('new-item-badge').value;
+  const desc = document.getElementById('new-item-desc').value;
+
+  const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+  const payload = {
+    id,
+    category,
+    name,
+    badge,
+    description: desc,
+    price,
+    inStock: true
+  };
+
+  // Assign design tokens based on category choice
+  if (category === 'food') {
+    payload.emoji = document.getElementById('new-item-emoji').value || '🍩';
+  } else {
+    const liquidColor = document.getElementById('new-item-color-liquid').value;
+    const foamColor = document.getElementById('new-item-color-foam').value;
+    payload.gradient = `linear-gradient(to top, #111111 0%, ${liquidColor} 70%, ${foamColor} 100%)`;
+    payload.foamColor = foamColor;
+  }
+
+  try {
+    await api.addMenuItem(payload);
+    dom.adminAddItemModal.classList.remove('open');
+    
+    // Refresh states
+    await loadMenuData();
+    refreshAdminData();
+  } catch (err) {
+    console.error(err);
+    alert('Failed to save menu item. Check network connection.');
   }
 }
 

@@ -1,0 +1,122 @@
+{
+  "menu": [
+    {
+      "id": "espresso",
+      "category": "coffee",
+      "name": "Classic Espresso",
+      "badge": "Rich & Intense",
+      "description": "A concentrated shot of pure arabica coffee, offering a robust aroma and caramel-toned crema.",
+      "price": 3.50,
+      "gradient": "linear-gradient(to top, #1c0e07 0%, #3a2215 100%)",
+      "foamColor": "rgba(217, 125, 56, 0.4)",
+      "special": false,
+      "inStock": true
+    },
+    {
+      "id": "cappuccino",
+      "category": "coffee",
+      "name": "Velvety Cappuccino",
+      "badge": "House Favorite",
+      "description": "Equal parts rich espresso, steamed milk, and a thick, cloud-like layer of velvety milk foam.",
+      "price": 4.75,
+      "gradient": "linear-gradient(to top, #29180e 0%, #5c3c24 70%, #ece0d1 100%)",
+      "foamColor": "#fcf8f2",
+      "special": true,
+      "inStock": true
+    },
+    {
+      "id": "caramel",
+      "category": "coffee",
+      "name": "Caramel Macchiato",
+      "badge": "Sweet & Creamy",
+      "description": "Freshly steamed milk stained with espresso, sweet vanilla syrup, and a crosshatch caramel drizzle.",
+      "price": 5.50,
+      "gradient": "linear-gradient(to top, #36220f 0%, #8a5a36 60%, #ffd166 100%)",
+      "foamColor": "#ffd166",
+      "special": false,
+      "inStock": true
+    },
+    {
+      "id": "matcha",
+      "category": "teas",
+      "name": "Iced Matcha Latte",
+      "badge": "Artisanal Green",
+      "description": "Vibrant Japanese ceremonial matcha whisked with ice-cold milk, creating creamy, earthy layers.",
+      "price": 5.25,
+      "gradient": "linear-gradient(to top, #2d6a4f 0%, #74c69d 60%, #e8f5e9 100%)",
+      "foamColor": "#d8f3dc",
+      "special": false,
+      "inStock": true
+    },
+    {
+      "id": "chamomile",
+      "category": "teas",
+      "name": "Organic Chamomile",
+      "badge": "Calming Herbal",
+      "description": "Soothe your senses with organic golden chamomile blossoms offering floral notes and honey undertones.",
+      "price": 4.50,
+      "gradient": "linear-gradient(to top, #6f5d30 0%, #bf993b 80%)",
+      "foamColor": "rgba(255, 235, 175, 0.2)",
+      "special": false,
+      "inStock": true
+    },
+    {
+      "id": "darjeeling",
+      "category": "teas",
+      "name": "Royal Darjeeling",
+      "badge": "Champagne of Teas",
+      "description": "Exquisite black tea from Darjeeling Himalayan estate, characterized by bright amber tones and floral muscatel notes.",
+      "price": 4.95,
+      "gradient": "linear-gradient(to top, #200b03 0%, #683011 80%)",
+      "foamColor": "rgba(217, 125, 56, 0.15)",
+      "special": true,
+      "inStock": true
+    },
+    {
+      "id": "croissant",
+      "category": "food",
+      "name": "Butter Croissant",
+      "badge": "Baked Daily",
+      "description": "Flaky, golden-brown puff pastry baked fresh each morning with premium organic butter.",
+      "price": 3.25,
+      "emoji": "🥐",
+      "special": false,
+      "inStock": true
+    },
+    {
+      "id": "muffin",
+      "category": "food",
+      "name": "Chocolate Muffin",
+      "badge": "Decadent Cup",
+      "description": "Double chocolate muffin filled with molten fudge chunks and topped with cocoa dusting.",
+      "price": 3.75,
+      "emoji": "🧁",
+      "special": false,
+      "inStock": true
+    },
+    {
+      "id": "cheesecake",
+      "category": "food",
+      "name": "Matcha Cheesecake",
+      "badge": "House Specialty",
+      "description": "Creamy New York style cheesecake infused with Uji matcha on a graham cracker base.",
+      "price": 5.50,
+      "emoji": "🍰",
+      "special": true,
+      "inStock": true
+    },
+    {
+      "id": "toast",
+      "category": "food",
+      "name": "Avocado Toast",
+      "badge": "Barista Choice",
+      "description": "Artisanal sourdough toast layered with seasoned mashed avocado, cherry tomatoes, and microgreens.",
+      "price": 6.25,
+      "emoji": "🥑",
+      "special": false,
+      "inStock": true
+    }
+  ],
+  "orders": [],
+  "reservations": []
+}
